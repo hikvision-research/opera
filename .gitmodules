@@ -1,3 +1,6 @@
 [submodule "third_party/mmcv"]
 	path = third_party/mmcv
 	url = https://github.com/open-mmlab/mmcv
+[submodule "third_party/mmdetection"]
+	path = third_party/mmdetection
+	url = https://github.com/open-mmlab/mmdetection
