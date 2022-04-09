@@ -1,6 +1,6 @@
 ## Introduction
 
-**O**bject **Per**ception & **A**pplication (Opera) is an unified toolbox for multiple computer vision tasks: detection, segmentation, pose estimation, etc.
+**O**bject **Per**ception & **A**pplication (Opera) is a unified toolbox for multiple computer vision tasks: detection, segmentation, pose estimation, etc.
 
 To date, Opera implements the following algorithms:
 
