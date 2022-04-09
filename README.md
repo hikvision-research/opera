@@ -1,6 +1,6 @@
 ## Introduction
 
-**O**bject **Per**ception & **A**pplication (Opera) is an unified toolbox for multiple computer vision task: detection, segmentation, pose estimation, etc.
+**O**bject **Per**ception & **A**pplication (Opera) is an unified toolbox for multiple computer vision tasks: detection, segmentation, pose estimation, etc.
 
 To date, Opera implements the following algorithms:
 
@@ -31,7 +31,7 @@ Opera is an open source project that is built upon [OpenMMLab](https://github.co
 ## Citation
 
 If you find our work useful in your research, please consider citing:
-```
+```BibTeX
 @inproceedings{shi2022end,
   title={End-to-End Multi-Person Pose Estimation with Transformers},
   author={Shi, Dahu and Wei, Xing and Li, Liangqi and Ren, Ye and Tan, Wenming},
