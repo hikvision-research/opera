@@ -13,16 +13,16 @@ Please refer to [get_started.md](docs/get_started.md) for installation.
 
 ## Environment
 
-- Linux or macOS
+- Linux
 - Python 3.7+
 - PyTorch 1.8+
 - CUDA 10.1+
 - [MMCV](https://mmcv.readthedocs.io/en/latest/#installation)
-- [MMDET](https://mmdet.readthedocs.io/en/latest/#installation)
+- [MMDetection](https://mmdet.readthedocs.io/en/latest/#installation)
 
 ## Getting Started
 
-Please see [get_started.md](docs/en/get_started.md) for the basic usage of Opera.
+Please see [get_started.md](docs/get_started.md) for the basic usage of Opera.
 
 ## Acknowledgement
 
@@ -30,7 +30,7 @@ Opera is an open source project that is built upon [OpenMMLab](https://github.co
 
 ## Citation
 
-If you find our work useful in your research, please consider citing:
+If you find our works useful in your research, please consider citing:
 ```BibTeX
 @inproceedings{shi2022end,
   title={End-to-End Multi-Person Pose Estimation with Transformers},
