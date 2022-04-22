@@ -4,8 +4,9 @@
 
 To date, Opera implements the following algorithms:
 
-* [PETR](configs/petr) _to be released_
-* [SOIT](configs/soit) _to be released_
+- [PETR (CVPR'2022)](configs/petr)
+- [SOIT (AAAI'2022)](configs/soit)
+- [InsPose (ACM MM'2021)](configs/inspose)
 
 ## Installation
 
@@ -26,9 +27,9 @@ Please see [get_started.md](docs/get_started.md) for the basic usage of Opera.
 
 ## Acknowledgement
 
-Opera is an open source project that is built upon [OpenMMLab](https://github.com/open-mmlab/). We appreciate all the contributors who implement this flexible and efficient toolkit.
+Opera is an open source project built upon [OpenMMLab](https://github.com/open-mmlab/). We appreciate all the contributors who implement this flexible and efficient toolkits.
 
-## Citation
+## Citations
 
 If you find our works useful in your research, please consider citing:
 ```BibTeX
@@ -44,6 +45,14 @@ If you find our works useful in your research, please consider citing:
   author={Yu, Xiaodong and Shi, Dahu and Wei, Xing and Ren, Ye and Ye, Tingqun and Tan, Wenming},
   booktitle={Proceedings of the AAAI Conference on Artificial Intelligence},
   year={2022}
+}
+
+@inproceedings{shi2021inspose,
+  title={Inspose: instance-aware networks for single-stage multi-person pose estimation},
+  author={Shi, Dahu and Wei, Xing and Yu, Xiaodong and Tan, Wenming and Ren, Ye and Pu, Shiliang},
+  booktitle={Proceedings of the 29th ACM International Conference on Multimedia},
+  pages={3079--3087},
+  year={2021}
 }
 ```
 
