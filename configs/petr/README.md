@@ -5,9 +5,9 @@
 
 | Model | Backbone | Lr schd  | keypoint AP | Download |
 |:-----:|:--------:|:--------:|:-----------:|:--------:|
-| PETR  |  R-50    |  100e    |    68.9     | [model](https://download.openmmlab.com/mmdetection/v2.0/deformable_detr/deformable_detr_r50_16x2_50e_coco/deformable_detr_r50_16x2_50e_coco_20210419_220030-a12b9512.pth) |
-| PETR  |  R-101   |  100e    |    70.0     | [model](https://download.openmmlab.com/mmdetection/v2.0/deformable_detr/deformable_detr_r50_16x2_50e_coco/deformable_detr_r50_16x2_50e_coco_20210419_220030-a12b9512.pth) |
-| PETR  |  Swin-L  |  100e    |    73.1     | [model](https://download.openmmlab.com/mmdetection/v2.0/deformable_detr/deformable_detr_r50_16x2_50e_coco/deformable_detr_r50_16x2_50e_coco_20210419_220030-a12b9512.pth) |
+| PETR  |  R-50    |  100e    |    68.9     | [model](https://drive.google.com/file/d/1HcwraqWdZ3CaGMQOJHY8exNem7UnFkfS/view?usp=sharing) |
+| PETR  |  R-101   |  100e    |    70.0     | [model](https://drive.google.com/file/d/1O261Jrt4JRGlIKTmLtPy3AUruwX1hsDf/view?usp=sharing) |
+| PETR  |  Swin-L  |  100e    |    73.1     | [model](https://drive.google.com/file/d/1ujL0Gm5tPjweT0-gdDGkTc7xXrEt6gBP/view?usp=sharing) |
 
 # NOTE
 
