@@ -4,7 +4,7 @@
 
 |  Model  | Backbone | Lr schd | keypoint AP | Download |
 |:-------:|:--------:|:-------:|:-----------:|:--------:|
-| Inspose |  R-50    |  3x     |    65.2     | [model](https://download.openmmlab.com/mmdetection/v2.0/deformable_detr/deformable_detr_r50_16x2_50e_coco/deformable_detr_r50_16x2_50e_coco_20210419_220030-a12b9512.pth) |
+| Inspose |  R-50    |  3x     |    65.2     | [model](https://drive.google.com/file/d/1JC0NeNwVWMoEuuGBdlsj-ggRWTMOc2UF/view?usp=sharing) |
 
 # NOTE
 
