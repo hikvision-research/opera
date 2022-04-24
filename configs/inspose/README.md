@@ -2,9 +2,9 @@
 
 ## Results and Models
 
-|  Model  | Backbone | Lr schd | keypoint AP | Download |
-|:-------:|:--------:|:-------:|:-----------:|:--------:|
-| Inspose |  R-50    |  3x     |    65.2     | [model](https://drive.google.com/file/d/1JC0NeNwVWMoEuuGBdlsj-ggRWTMOc2UF/view?usp=sharing) |
+|  Model  | Backbone | Lr schd | mAP  | AP<sup>50</sup> | AP<sup>75</sup> | AP<sup>M</sup> | AP<sup>L</sup> | Download |
+|:-------:|:--------:|:-------:|:----:|:---------------:|:---------------:|:--------------:|:--------------:|:--------:|
+| Inspose |  R-50    |  3x     | 65.2 |      87.2       |      71.3       |      60.6      |      72.2      |[model](https://drive.google.com/file/d/1JC0NeNwVWMoEuuGBdlsj-ggRWTMOc2UF/view?usp=sharing) |
 
 # NOTE
 
