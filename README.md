@@ -19,7 +19,7 @@ Please refer to [get_started.md](docs/get_started.md) for installation.
 - PyTorch 1.8+
 - CUDA 10.1+
 - [MMCV](https://mmcv.readthedocs.io/en/latest/#installation)
-- [MMDetection](https://mmdet.readthedocs.io/en/latest/#installation)
+- [MMDetection](https://mmdetection.readthedocs.io/en/latest/#installation)
 
 ## Getting Started
 
