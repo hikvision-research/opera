@@ -1,4 +1,4 @@
-# InsPose: Instance-Aware Networks for Single-Stage Multi-Person Pose Estimation
+# [InsPose: Instance-Aware Networks for Single-Stage Multi-Person Pose Estimation](https://arxiv.org/abs/2107.08982)
 
 ## Results and Models
 
