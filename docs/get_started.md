@@ -1,6 +1,6 @@
 # Installation
 
-Opera relies on several basic packages such as MMCV, MMDetection, etc, so you need to install these packages as well.
+Opera relies on several basic packages such as MMCV, MMDetection, etc, so you need to install these packages at first.
 
 1. Install `mmcv`
 
@@ -37,7 +37,7 @@ If you need to add a new project in Opera, please follow:
 
 # Prepare configurations
 
-1. Opera allows users to call all the datasets or models defined in `opera` and `third_party`.
+1. Opera allows users to call all the modules defined in `opera` and `third_party`.
 
 2. You need to indicate the source of the dataset or model explicitly like
 
