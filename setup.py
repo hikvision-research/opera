@@ -189,13 +189,13 @@ if __name__ == '__main__':
     setup(
         name='opera',
         version=get_version(),
-        description='HIKVision Object Perception & Analysis',
+        description='Hikvision Object Perception & Analysis',
         long_description=readme(),
         long_description_content_type='text/markdown',
         author='Opera Contributors',
-        author_email='shidahu@hikvision.com;liliangqi@hikvision.com',
+        author_email='shidahu@hikvision.com; liliangqi@hikvision.com',
         keywords='computer vision, object perception',
-        url=None,
+        url='https://github.com/hikvision-research/opera',
         packages=find_packages(exclude=('configs', 'tools')),
         include_package_data=True,
         classifiers=[
@@ -209,8 +209,6 @@ if __name__ == '__main__':
             'Programming Language :: Python :: 3.9',
         ],
         license='Apache License 2.0',
-        setup_requires=parse_requirements('requirements/build.txt'),
-        tests_require=parse_requirements('requirements/tests.txt'),
         install_requires=parse_requirements('requirements/runtime.txt'),
         extras_require={
             'all': parse_requirements('requirements.txt'),
