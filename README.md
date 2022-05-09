@@ -12,7 +12,7 @@ To date, Opera implements the following algorithms:
 
 Please refer to [get_started.md](docs/get_started.md) for installation.
 
-## Environment
+## Requirements
 
 - Linux
 - Python 3.7+
