@@ -16,6 +16,8 @@ from ..builder import DETECTORS
 
 @DETECTORS.register_module()
 class PETR(DETR):
+    """Implementation of `End-to-End Multi-Person Pose Estimation with
+    Transformers`"""
 
     def __init__(self, *args, **kwargs):
         super(DETR, self).__init__(*args, **kwargs)

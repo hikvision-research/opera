@@ -23,17 +23,15 @@ from ..builder import HEADS, build_loss
 class PETRHead(AnchorFreeHead):
     """Implements the PETR transformer head.
 
-    More details can be found in the `paper
-    <https://arxiv.org/abs/2010.04159>`_ .
-
     Args:
         num_classes (int): Number of categories excluding the background.
         in_channels (int): Number of channels in the input feature map.
         num_query (int): Number of query in Transformer.
         num_kpt_fcs (int, optional): Number of fully-connected layers used in
-            `FFN`, which is then used for the keypoint regression head. Default 2.
-        transformer (obj:`mmcv.ConfigDict`|dict): Config for transformer.
-            Default: None.
+            `FFN`, which is then used for the keypoint regression head.
+            Default 2.
+        transformer (obj:`mmcv.ConfigDict`|dict): ConfigDict is used for
+            building the Encoder and Decoder. Default: None.
         sync_cls_avg_factor (bool): Whether to sync the avg_factor of
             all ranks. Default to False.
         positional_encoding (obj:`mmcv.ConfigDict`|dict):
@@ -44,18 +42,18 @@ class PETRHead(AnchorFreeHead):
             regression loss. Default `L1Loss`.
         loss_oks (obj:`mmcv.ConfigDict`|dict): Config of the
             regression oks loss. Default `OKSLoss`.
+        loss_hm (obj:`mmcv.ConfigDict`|dict): Config of the
+            regression heatmap loss. Default `NegLoss`.
+        as_two_stage (bool) : Whether to generate the proposal from
+            the outputs of encoder.
+        with_kpt_refine (bool): Whether to refine the reference points
+            in the decoder. Defaults to True.
         train_cfg (obj:`mmcv.ConfigDict`|dict): Training config of
             transformer head.
         test_cfg (obj:`mmcv.ConfigDict`|dict): Testing config of
             transformer head.
         init_cfg (dict or list[dict], optional): Initialization config dict.
-            Default: None
-        with_kpt_refine (bool): Whether to refine the reference points
-            in the decoder. Defaults to False.
-        as_two_stage (bool) : Whether to generate the proposal from
-            the outputs of encoder.
-        transformer (obj:`ConfigDict`): ConfigDict is used for building
-            the Encoder and Decoder.
+            Default: None.
     """
 
     def __init__(self,
@@ -222,19 +220,19 @@ class PETRHead(AnchorFreeHead):
             img_metas (list[dict]): List of image information.
 
         Returns:
-            all_cls_scores (Tensor): Outputs from the classification head, \
-                shape [nb_dec, bs, num_query, cls_out_channels]. Note \
+            all_cls_scores (Tensor): Outputs from the classification head,
+                shape [nb_dec, bs, num_query, cls_out_channels]. Note
                 cls_out_channels should includes background.
-            all_bbox_preds (Tensor): Sigmoid outputs from the regression \
-                head with normalized coordinate format (cx, cy, w, h). \
+            all_bbox_preds (Tensor): Sigmoid outputs from the regression
+                head with normalized coordinate format (cx, cy, w, h).
                 Shape [nb_dec, bs, num_query, 4].
-            enc_outputs_class (Tensor): The score of each point on encode \
-                feature map, has shape (N, h*w, num_class). Only when \
-                as_two_stage is Ture it would be returned, otherwise \
+            enc_outputs_class (Tensor): The score of each point on encode
+                feature map, has shape (N, h*w, num_class). Only when
+                as_two_stage is Ture it would be returned, otherwise
                 `None` would be returned.
-            enc_outputs_coord (Tensor): The proposal generate from the \
-                encode feature map, has shape (N, h*w, 4). Only when \
-                as_two_stage is Ture it would be returned, otherwise \
+            enc_outputs_coord (Tensor): The proposal generate from the
+                encode feature map, has shape (N, h*w, 4). Only when
+                as_two_stage is Ture it would be returned, otherwise
                 `None` would be returned.
         """
 
@@ -263,8 +261,10 @@ class PETRHead(AnchorFreeHead):
                     mlvl_masks,
                     query_embeds,
                     mlvl_positional_encodings,
-                    kpt_branches=self.kpt_branches if self.with_kpt_refine else None,  # noqa:E501
-                    cls_branches=self.cls_branches if self.as_two_stage else None  # noqa:E501
+                    kpt_branches=self.kpt_branches \
+                        if self.with_kpt_refine else None,  # noqa:E501
+                    cls_branches=self.cls_branches \
+                        if self.as_two_stage else None  # noqa:E501
             )
         hs = hs.permute(0, 2, 1, 3)
         outputs_classes = []
@@ -306,26 +306,14 @@ class PETRHead(AnchorFreeHead):
         """Forward function.
 
         Args:
-            mlvl_feats (tuple[Tensor]): Features from the upstream
-                network, each is a 4D-tensor with shape
-                (N, C, H, W).
+            mlvl_masks (tuple[Tensor]): The key_padding_mask from
+                different level used for encoder and decoder,
+                each is a 3D-tensor with shape (bs, H, W).
+            losses (dict[str, Tensor]): A dictionary of loss components.
             img_metas (list[dict]): List of image information.
 
         Returns:
-            all_cls_scores (Tensor): Outputs from the classification head, \
-                shape [nb_dec, bs, num_query, cls_out_channels]. Note \
-                cls_out_channels should includes background.
-            all_bbox_preds (Tensor): Sigmoid outputs from the regression \
-                head with normalized coordinate format (cx, cy, w, h). \
-                Shape [nb_dec, bs, num_query, 4].
-            enc_outputs_class (Tensor): The score of each point on encode \
-                feature map, has shape (N, h*w, num_class). Only when \
-                as_two_stage is Ture it would be returned, otherwise \
-                `None` would be returned.
-            enc_outputs_coord (Tensor): The proposal generate from the \
-                encode feature map, has shape (N, h*w, 4). Only when \
-                as_two_stage is Ture it would be returned, otherwise \
-                `None` would be returned.
+            dict[str, Tensor]: A dictionary of loss components.
         """
         kpt_preds, kpt_targets, area_targets, kpt_weights = refine_targets
         pos_inds = kpt_weights.sum(-1) > 0
@@ -478,19 +466,16 @@ class PETRHead(AnchorFreeHead):
             all_cls_scores (Tensor): Classification score of all
                 decoder layers, has shape
                 [nb_dec, bs, num_query, cls_out_channels].
-            all_bbox_preds (Tensor): Sigmoid regression
+            all_kpt_preds (Tensor): Sigmoid regression
                 outputs of all decode layers. Each is a 4D-tensor with
-                normalized coordinate format (cx, cy, w, h) and shape
-                [nb_dec, bs, num_query, 4].
+                normalized coordinate format (x_{i}, y_{i}) and shape
+                [nb_dec, bs, num_query, K*2].
             enc_cls_scores (Tensor): Classification scores of
-                points on encode feature map , has shape
+                points on encode feature map, has shape
                 (N, h*w, num_classes). Only be passed when as_two_stage is
                 True, otherwise is None.
             enc_kpt_preds (Tensor): Regression results of each points
                 on the encode feature map, has shape (N, h*w, K*2). Only be
-                passed when as_two_stage is True, otherwise is None.
-            enc_feat_grids (Tensor): grid coordinates of each points
-                on the encode feature map, has shape (N, h*w, 2). Only be
                 passed when as_two_stage is True, otherwise is None.
             gt_bboxes_list (list[Tensor]): Ground truth bboxes for each image
                 with shape (num_gts, 4) in [tl_x, tl_y, br_x, br_y] format.
@@ -612,14 +597,9 @@ class PETRHead(AnchorFreeHead):
         Args:
             cls_scores (Tensor): Box score logits from a single decoder layer
                 for all images. Shape [bs, num_query, cls_out_channels].
-            bbox_preds (Tensor): Sigmoid outputs from a single decoder layer
-                for all images, with normalized coordinate (cx, cy, w, h) and
-                shape [bs, num_query, 4].
             kpt_preds (Tensor): Sigmoid outputs from a single decoder layer
                 for all images, with normalized coordinate (x_{i}, y_{i}) and
                 shape [bs, num_query, K*2].
-            gt_bboxes_list (list[Tensor]): Ground truth bboxes for each image
-                with shape (num_gts, 4) in [tl_x, tl_y, br_x, br_y] format.
             gt_labels_list (list[Tensor]): Ground truth class indices for each
                 image with shape (num_gts, ).
             gt_keypoints_list (list[Tensor]): Ground truth keypoints for each
@@ -628,8 +608,6 @@ class PETRHead(AnchorFreeHead):
             gt_areas_list (list[Tensor]): Ground truth mask areas for each
                 image with shape (num_gts, ).
             img_metas (list[dict]): List of image meta information.
-            gt_bboxes_ignore_list (list[Tensor], optional): Bounding
-                boxes which can be ignored for each image. Default None.
 
         Returns:
             dict[str, Tensor]: A dictionary of loss components for outputs from
@@ -721,14 +699,9 @@ class PETRHead(AnchorFreeHead):
             cls_scores_list (list[Tensor]): Box score logits from a single
                 decoder layer for each image with shape [num_query,
                 cls_out_channels].
-            bbox_preds_list (list[Tensor]): Sigmoid outputs from a single
-                decoder layer for each image, with normalized coordinate
-                (cx, cy, w, h) and shape [num_query, 4].
             kpt_preds_list (list[Tensor]): Sigmoid outputs from a single
                 decoder layer for each image, with normalized coordinate
                 (x_{i}, y_{i}) and shape [num_query, K*2].
-            gt_bboxes_list (list[Tensor]): Ground truth bboxes for each image
-                with shape (num_gts, 4) in [tl_x, tl_y, br_x, br_y] format.
             gt_labels_list (list[Tensor]): Ground truth class indices for each
                 image with shape (num_gts, ).
             gt_keypoints_list (list[Tensor]): Ground truth keypoints for each
@@ -736,26 +709,22 @@ class PETRHead(AnchorFreeHead):
             gt_areas_list (list[Tensor]): Ground truth mask areas for each
                 image with shape (num_gts, ).
             img_metas (list[dict]): List of image meta information.
-            gt_bboxes_ignore_list (list[Tensor], optional): Bounding
-                boxes which can be ignored for each image. Default None.
 
         Returns:
             tuple: a tuple containing the following targets.
 
                 - labels_list (list[Tensor]): Labels for all images.
-                - label_weights_list (list[Tensor]): Label weights for all \
+                - label_weights_list (list[Tensor]): Label weights for all
                     images.
-                - bbox_targets_list (list[Tensor]): BBox targets for all \
+                - kpt_targets_list (list[Tensor]): Kpt targets for all
                     images.
-                - bbox_weights_list (list[Tensor]): BBox weights for all \
+                - kpt_weights_list (list[Tensor]): Kpt weights for all
                     images.
-                - kpt_targets_list (list[Tensor]): Kpt targets for all \
+                - area_targets_list (list[Tensor]): area targets for all
                     images.
-                - kpt_weights_list (list[Tensor]): Kpt weights for all \
+                - num_total_pos (int): Number of positive samples in all
                     images.
-                - num_total_pos (int): Number of positive samples in all \
-                    images.
-                - num_total_neg (int): Number of negative samples in all \
+                - num_total_neg (int): Number of negative samples in all
                     images.
         """
         (labels_list, label_weights_list, kpt_targets_list, kpt_weights_list,
@@ -782,14 +751,9 @@ class PETRHead(AnchorFreeHead):
         Args:
             cls_score (Tensor): Box score logits from a single decoder layer
                 for one image. Shape [num_query, cls_out_channels].
-            bbox_pred (Tensor): Sigmoid outputs from a single decoder layer
-                for one image, with normalized coordinate (cx, cy, w, h) and
-                shape [num_query, 4].
             kpt_pred (Tensor): Sigmoid outputs from a single decoder layer
                 for one image, with normalized coordinate (x_{i}, y_{i}) and
                 shape [num_query, K*2].
-            gt_bboxes (Tensor): Ground truth bboxes for one image with
-                shape (num_gts, 4) in [tl_x, tl_y, br_x, br_y] format.
             gt_labels (Tensor): Ground truth class indices for one image
                 with shape (num_gts, ).
             gt_keypoints (Tensor): Ground truth keypoints for one image with
@@ -798,18 +762,15 @@ class PETRHead(AnchorFreeHead):
             gt_areas (Tensor): Ground truth mask areas for one image
                 with shape (num_gts, ).
             img_meta (dict): Meta information for one image.
-            gt_bboxes_ignore (Tensor, optional): Bounding boxes
-                which can be ignored. Default None.
 
         Returns:
             tuple[Tensor]: a tuple containing the following for one image.
 
                 - labels (Tensor): Labels of each image.
                 - label_weights (Tensor]): Label weights of each image.
-                - bbox_targets (Tensor): BBox targets of each image.
-                - bbox_weights (Tensor): BBox weights of each image.
                 - kpt_targets (Tensor): Keypoint targets of each image.
                 - kpt_weights (Tensor): Keypoint weights of each image.
+                - area_targets (Tensor): Area targets of each image.
                 - pos_inds (Tensor): Sampled positive indices for each image.
                 - neg_inds (Tensor): Sampled negative indices for each image.
         """
@@ -875,16 +836,17 @@ class PETRHead(AnchorFreeHead):
         Args:
             cls_scores (Tensor): Box score logits from a single decoder layer
                 for all images. Shape [bs, num_query, cls_out_channels].
-            bbox_preds (Tensor): Sigmoid outputs from a single decoder layer
-                for all images, with normalized coordinate (cx, cy, w, h) and
-                shape [bs, num_query, 4].
-            gt_bboxes_list (list[Tensor]): Ground truth bboxes for each image
-                with shape (num_gts, 4) in [tl_x, tl_y, br_x, br_y] format.
+            kpt_preds (Tensor): Sigmoid outputs from a single decoder layer
+                for all images, with normalized coordinate (x_{i}, y_{i}) and
+                shape [bs, num_query, K*2].
             gt_labels_list (list[Tensor]): Ground truth class indices for each
                 image with shape (num_gts, ).
+            gt_keypoints_list (list[Tensor]): Ground truth keypoints for each
+                image with shape (num_gts, K*3) in [p^{1}_x, p^{1}_y, p^{1}_v,
+                ..., p^{K}_x, p^{K}_y, p^{K}_v] format.
+            gt_areas_list (list[Tensor]): Ground truth mask areas for each
+                image with shape (num_gts, ).
             img_metas (list[dict]): List of image meta information.
-            gt_bboxes_ignore_list (list[Tensor], optional): Bounding
-                boxes which can be ignored for each image. Default None.
 
         Returns:
             dict[str, Tensor]: A dictionary of loss components for outputs from
@@ -949,31 +911,26 @@ class PETRHead(AnchorFreeHead):
             all_cls_scores (Tensor): Classification score of all
                 decoder layers, has shape
                 [nb_dec, bs, num_query, cls_out_channels].
-            all_bbox_preds (Tensor): Sigmoid regression
-                outputs of all decode layers. Each is a 4D-tensor with
-                normalized coordinate format (cx, cy, w, h) and shape
-                [nb_dec, bs, num_query, 4].
             all_kpt_preds (Tensor): Sigmoid regression
                 outputs of all decode layers. Each is a 4D-tensor with
                 normalized coordinate format (x_{i}, y_{i}) and shape
                 [nb_dec, bs, num_query, K*2].
-            enc_cls_scores (Tensor): Classification scores of
-                points on encode feature map , has shape
-                (N, h*w, num_classes). Only be passed when as_two_stage is
-                True, otherwise is None.
-            enc_bbox_preds (Tensor): Regression results of each points
-                on the encode feature map, has shape (N, h*w, 4). Only be
+            enc_cls_scores (Tensor): Classification scores of points on
+                encode feature map, has shape (N, h*w, num_classes).
+                Only be passed when as_two_stage is True, otherwise is None.
+            enc_kpt_preds (Tensor): Regression results of each points
+                on the encode feature map, has shape (N, h*w, K*2). Only be
                 passed when as_two_stage is True, otherwise is None.
             img_metas (list[dict]): Meta information of each image.
             rescale (bool, optional): If True, return boxes in original
                 image space. Defalut False.
 
         Returns:
-            list[list[Tensor, Tensor]]: Each item in result_list is 2-tuple. \
-                The first item is an (n, 5) tensor, where the first 4 columns \
-                are bounding box positions (tl_x, tl_y, br_x, br_y) and the \
-                5-th column is a score between 0 and 1. The second item is a \
-                (n,) tensor where each item is the predicted class label of \
+            list[list[Tensor, Tensor]]: Each item in result_list is 2-tuple.
+                The first item is an (n, 5) tensor, where the first 4 columns
+                are bounding box positions (tl_x, tl_y, br_x, br_y) and the
+                5-th column is a score between 0 and 1. The second item is a
+                (n,) tensor where each item is the predicted class label of
                 the corresponding box.
         """
         cls_scores = all_cls_scores[-1]
@@ -1010,9 +967,6 @@ class PETRHead(AnchorFreeHead):
         Args:
             cls_score (Tensor): Box score logits from the last decoder layer
                 for each image. Shape [num_query, cls_out_channels].
-            bbox_pred (Tensor): Sigmoid outputs from the last decoder layer
-                for each image, with coordinate format (cx, cy, w, h) and
-                shape [num_query, 4].
             kpt_pred (Tensor): Sigmoid outputs from the last decoder layer
                 for each image, with coordinate format (x_{i}, y_{i}) and
                 shape [num_query, K*2].
@@ -1025,12 +979,13 @@ class PETRHead(AnchorFreeHead):
         Returns:
             tuple[Tensor]: Results of detected bboxes and labels.
 
-                - det_bboxes: Predicted bboxes with shape [num_query, 5], \
-                    where the first 4 columns are bounding box positions \
-                    (tl_x, tl_y, br_x, br_y) and the 5-th column are scores \
+                - det_bboxes: Predicted bboxes with shape [num_query, 5],
+                    where the first 4 columns are bounding box positions
+                    (tl_x, tl_y, br_x, br_y) and the 5-th column are scores
                     between 0 and 1.
-                - det_labels: Predicted labels of the corresponding box with \
+                - det_labels: Predicted labels of the corresponding box with
                     shape [num_query].
+                - det_kpts: Predicted keypoints with shape [num_query, K, 3].
         """
         assert len(cls_score) == len(kpt_pred)
         max_per_img = self.test_cfg.get('max_per_img', self.num_query)
@@ -1096,7 +1051,7 @@ class PETRHead(AnchorFreeHead):
                 The first item is ``bboxes`` with shape (n, 5),
                 where 5 represent (tl_x, tl_y, br_x, br_y, score).
                 The shape of the second tensor in the tuple is ``labels``
-                with shape (n,)
+                with shape (n,).
         """
         # forward of this head requires img_metas
         outs = self.forward(feats, img_metas)
