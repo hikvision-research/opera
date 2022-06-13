@@ -45,7 +45,7 @@ class PETR(DETR):
             gt_keypoints (list[Tensor]): Each item are the truth keypoints for
                 each image in [p^{1}_x, p^{1}_y, p^{1}_v, ..., p^{K}_x,
                 p^{K}_y, p^{K}_v] format.
-            gt_areas (list[Tensor]): mask areas corresponding to each box
+            gt_areas (list[Tensor]): mask areas corresponding to each box.
             gt_bboxes_ignore (None | list[Tensor]): Specify which bounding
                 boxes can be ignored when computing the loss.
 
@@ -62,7 +62,7 @@ class PETR(DETR):
     def forward_dummy(self, img):
         """Used for computing network flops.
 
-        See `mmdetection/tools/analysis_tools/get_flops.py`
+        See `mmdetection/tools/analysis_tools/get_flops.py`.
         """
         warnings.warn('Warning! MultiheadAttention in DETR does not '
                       'support flops computation! Do not use the '
@@ -85,7 +85,7 @@ class PETR(DETR):
         """Test function without test time augmentation.
 
         Args:
-            imgs (list[torch.Tensor]): List of multiple images
+            imgs (list[torch.Tensor]): List of multiple images.
             img_metas (list[dict]): List of image information.
             rescale (bool, optional): Whether to rescale the results.
                 Defaults to False.
@@ -114,12 +114,12 @@ class PETR(DETR):
         """Merge augmented detection bboxes and keypoints.
 
         Args:
-            aug_bboxes (list[Tensor]): shape (n, 4*#class)
-            aug_kpts (list[Tensor] or None): shape (n, 17, 2)
-            img_metas (list): meta information
+            aug_bboxes (list[Tensor]): shape (n, 4*#class).
+            aug_kpts (list[Tensor] or None): shape (n, 17, 2).
+            img_metas (list): meta information.
 
         Returns:
-            tuple: (bboxes, scores)
+            tuple: (bboxes, kpts, scores).
         """
         recovered_bboxes = []
         recovered_kpts = []
@@ -204,15 +204,15 @@ class PETR(DETR):
             score_thr (float, optional): Minimum score of bboxes to be shown.
                 Default: 0.3.
             bbox_color (str or tuple(int) or :obj:`Color`):Color of bbox lines.
-               The tuple of color should be in BGR order. Default: 'green'
+               The tuple of color should be in BGR order. Default: 'green'.
             text_color (str or tuple(int) or :obj:`Color`):Color of texts.
-               The tuple of color should be in BGR order. Default: 'green'
+               The tuple of color should be in BGR order. Default: 'green'.
             mask_color (None or str or tuple(int) or :obj:`Color`):
                Color of masks. The tuple of color should be in BGR order.
-               Default: None
-            thickness (int): Thickness of lines. Default: 2
-            font_size (int): Font size of texts. Default: 13
-            win_name (str): The window name. Default: ''
+               Default: None.
+            thickness (int): Thickness of lines. Default: 2.
+            font_size (int): Font size of texts. Default: 13.
+            win_name (str): The window name. Default: ''.
             wait_time (float): Value of waitKey param.
                 Default: 0.
             show (bool): Whether to show the image.
@@ -221,7 +221,7 @@ class PETR(DETR):
                 Default: None.
 
         Returns:
-            img (Tensor): Only if not `show` or `out_file`
+            img (Tensor): Only if not `show` or `out_file`.
         """
         img = mmcv.imread(img)
         img = img.copy()
@@ -297,24 +297,24 @@ class PETR(DETR):
             bboxes (ndarray): Bounding boxes (with scores), shaped (n, 4) or
                 (n, 5).
             labels (ndarray): Labels of bboxes.
-            segms (ndarray or None): Masks, shaped (n,h,w) or None
+            segms (ndarray or None): Masks, shaped (n,h,w) or None.
             bboxes (ndarray): keypoints (with scores), shaped (n, K, 3).
             class_names (list[str]): Names of each classes.
-            score_thr (float): Minimum score of bboxes to be shown. Default: 0
+            score_thr (float): Minimum score of bboxes to be shown. Default: 0.
             bbox_color (str or tuple(int) or :obj:`Color`):Color of bbox lines.
-                The tuple of color should be in BGR order. Default: 'green'
+                The tuple of color should be in BGR order. Default: 'green'.
                 text_color (str or tuple(int) or :obj:`Color`):Color of texts.
-                The tuple of color should be in BGR order. Default: 'green'
+                The tuple of color should be in BGR order. Default: 'green'.
             mask_color (str or tuple(int) or :obj:`Color`, optional):
                 Color of masks. The tuple of color should be in BGR order.
-                Default: None
-            thickness (int): Thickness of lines. Default: 2
-            font_size (int): Font size of texts. Default: 13
-            show (bool): Whether to show the image. Default: True
-            win_name (str): The window name. Default: ''
+                Default: None.
+            thickness (int): Thickness of lines. Default: 2.
+            font_size (int): Font size of texts. Default: 13.
+            show (bool): Whether to show the image. Default: True.
+            win_name (str): The window name. Default: ''.
             wait_time (float): Value of waitKey param. Default: 0.
             out_file (str, optional): The filename to write the image.
-                Default: None
+                Default: None.
 
         Returns:
             ndarray: The image with bboxes drawn on it.
