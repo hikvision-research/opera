@@ -58,7 +58,8 @@ train_pipeline = [
         ]),
     dict(type='mmdet.Normalize', **img_norm_cfg),
     dict(type='mmdet.Pad', size_divisor=1),
-    dict(type='opera.DefaultFormatBundle'),
+    dict(type='opera.DefaultFormatBundle',
+         extra_keys=['gt_keypoints', 'gt_areas']),
     dict(type='mmdet.Collect',
          keys=['img', 'gt_bboxes', 'gt_labels', 'gt_keypoints', 'gt_areas']),
 ]
