@@ -1,6 +1,7 @@
 matplotlib
 numpy
 pycocotools
+xtcocotools
 six
 terminaltables
 SharedArray==3.1.0
