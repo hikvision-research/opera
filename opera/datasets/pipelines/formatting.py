@@ -1,8 +1,6 @@
 # Copyright (c) Hikvision Research Institute. All rights reserved.
-from collections.abc import Sequence
-
 from mmcv.parallel import DataContainer as DC
-from mmdet.datasets.pipelines.formating import to_tensor as to_tensor
+from mmdet.datasets.pipelines.formating import to_tensor
 from mmdet.datasets.pipelines.formating import DefaultFormatBundle \
     as MMDetDefaultFormatBundle
 
@@ -15,6 +13,8 @@ class DefaultFormatBundle(MMDetDefaultFormatBundle):
 
     It simplifies the pipeline of formatting common fields, including "img",
     "proposals", "gt_bboxes", "gt_labels", "gt_masks" and "gt_semantic_seg".
+    Besides, it is extended to support other customed fields, such as
+    "gt_keypoints", "gt_areas", etc.
     These fields are formatted as follows.
 
     - img: (1)transpose, (2)to tensor, (3)to DataContainer (stack=True)
@@ -25,9 +25,16 @@ class DefaultFormatBundle(MMDetDefaultFormatBundle):
     - gt_masks: (1)to tensor, (2)to DataContainer (cpu_only=True)
     - gt_semantic_seg: (1)unsqueeze dim-0 (2)to tensor, \
                        (3)to DataContainer (stack=True)
-    - gt_keypoints: (1)to tensor, (2)to DataContainer
-    - gt_areas: (1)to tensor, (2)to DataContainer
+    - customed_field1: (1)to tensor, (2)to DataContainer
+    - customed_field2: (1)to tensor, (2)to DataContainer
     """
+
+    def __init__(self,
+                 *args,
+                 extra_keys=[],
+                 **kwargs):
+        super(DefaultFormatBundle, self).__init__(*args, **kwargs)
+        self.extra_keys = extra_keys
 
     def __call__(self, results):
         """Call function to transform and format common fields in results.
@@ -41,8 +48,10 @@ class DefaultFormatBundle(MMDetDefaultFormatBundle):
         """
 
         results = super(DefaultFormatBundle, self).__call__(results)
-        for key in ['gt_keypoints', 'gt_areas']:
-            if key not in results:
-                continue
-            results[key] = DC(to_tensor(results[key]))
+        assert isinstance(self.extra_keys, (list, tuple))
+        if self.extra_keys:
+            for key in self.extra_keys:
+                if key not in results:
+                    continue
+                results[key] = DC(to_tensor(results[key]))
         return results
