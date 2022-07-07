@@ -88,8 +88,8 @@ class RandomFlip(MMDetRandomFlip):
         """Flip keypoints horizontally.
 
         Args:
-            keypoints (numpy.ndarray): person's keypoints, shape (..., 3*17)
-            img_shape (tuple[int]): Image shape (height, width)
+            keypoints (numpy.ndarray): person's keypoints, shape (..., K*3).
+            img_shape (tuple[int]): Image shape (height, width).
             direction (str): Flip direction. Options are 'horizontal',
                 'vertical'.
 
@@ -257,11 +257,12 @@ class RandomCrop(MMDetRandomCrop):
                 keypoints = results[key].copy()
                 keypoints = keypoints.reshape(keypoints.shape[0], -1, 3)
                 keypoints[..., :2] = keypoints[..., :2] - kpt_offset
-                invalid_idx = (keypoints[..., 0] < 0).astype(np.int8) | \
-                            (keypoints[..., 1] < 0).astype(np.int8) | \
-                            (keypoints[..., 0] > img_shape[1]).astype(np.int8) | \
-                            (keypoints[..., 1] > img_shape[0]).astype(np.int8) | \
-                            (keypoints[..., 2] < 0.1).astype(np.int8)
+                invalid_idx = \
+                    (keypoints[..., 0] < 0).astype(np.int8) | \
+                    (keypoints[..., 1] < 0).astype(np.int8) | \
+                    (keypoints[..., 0] > img_shape[1]).astype(np.int8) | \
+                    (keypoints[..., 1] > img_shape[0]).astype(np.int8) | \
+                    (keypoints[..., 2] < 0.1).astype(np.int8)
                 assert key == 'gt_keypoints'
                 gt_valid = ~invalid_idx.all(1)
                 results['gt_bboxes'] = results['gt_bboxes'][gt_valid]

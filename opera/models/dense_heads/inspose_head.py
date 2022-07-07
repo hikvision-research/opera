@@ -2,13 +2,13 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import numpy as np
 from mmcv.cnn import ConvModule, Scale, bias_init_with_prob, normal_init
 from mmcv.runner import force_fp32
-from mmcv.ops import DeformConv2d, ModulatedDeformConv2d
+from mmcv.ops import DeformConv2d
 from mmdet.core import multi_apply
 from mmdet.core.post_processing import multiclass_nms
 from mmdet.models.dense_heads.anchor_free_head import AnchorFreeHead
-import numpy as np
 
 from ..builder import HEADS, build_loss
 from opera.core.keypoint import (distance2keypoint, draw_umich_gaussian,
@@ -330,9 +330,11 @@ class InsPoseHead(AnchorFreeHead):
 
     def star_dcn_offset(self, offset_pred, gradient_mul):
         """Compute the star deformable conv offsets.
+
         Args:
             offset_pred (Tensor): Predicted keypoint offset (delta_x, delta_y) * 17.
             gradient_mul (float): Gradient multiplier.
+
         Returns:
             dcn_offset (Tensor): The offsets for deformable convolution.
         """
@@ -957,13 +959,12 @@ class InsPoseHead(AnchorFreeHead):
             tags = []
             pull, push = 0, 0
             for j in range(gt_label.size(0)):
-                # TODO: tuning heatmap radius
                 kp_radius = torch.clamp(
-                    torch.floor(gaussian_radius((gt_h[j], gt_w[j]),
+                    torch.floor(
+                        gaussian_radius((gt_h[j], gt_w[j]),
                                         min_overlap=self.min_overlap_hm)),
                     min=self.min_hm_radius,
                     max=self.max_hm_radius)
-                # TODO: tuning offset radius
                 offset_radius = torch.clamp(
                     torch.floor(
                         gaussian_radius((gt_h[j], gt_w[j]),
@@ -1090,10 +1091,11 @@ class InsPoseHead(AnchorFreeHead):
 
 def _neg_loss(pred, gt):
     """Modified focal loss. Exactly the same as CornerNet.
-      Runs faster and costs a little bit more memory
-    Arguments:
-      pred (batch x c x h x w)
-      gt_regr (batch x c x h x w)
+    Runs faster and costs a little bit more memory.
+
+    Args:
+      pred (Tensor): [bs, c, h, w].
+      gt_regr (Tensor): [bs, c, h, w].
     """
     pos_inds = gt.eq(1).float()
     neg_inds = gt.lt(1).float()

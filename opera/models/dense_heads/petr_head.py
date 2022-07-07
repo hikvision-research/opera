@@ -7,8 +7,7 @@ import torch.nn.functional as F
 from mmcv.cnn import (Linear, bias_init_with_prob, constant_init, normal_init,
                       build_activation_layer)
 from mmcv.runner import force_fp32
-from mmdet.core import (bbox_cxcywh_to_xyxy, bbox_xyxy_to_cxcywh, multi_apply,
-                        reduce_mean)
+from mmdet.core import multi_apply, reduce_mean
 from mmdet.models.utils.transformer import inverse_sigmoid
 from mmdet.models.dense_heads import AnchorFreeHead
 
@@ -21,7 +20,7 @@ from ..builder import HEADS, build_loss
 
 @HEADS.register_module()
 class PETRHead(AnchorFreeHead):
-    """Implements the PETR transformer head.
+    """Head of `End-to-End Multi-Person Pose Estimation with Transformers`.
 
     Args:
         num_classes (int): Number of categories excluding the background.
@@ -220,18 +219,18 @@ class PETRHead(AnchorFreeHead):
             img_metas (list[dict]): List of image information.
 
         Returns:
-            all_cls_scores (Tensor): Outputs from the classification head,
+            outputs_classes (Tensor): Outputs from the classification head,
                 shape [nb_dec, bs, num_query, cls_out_channels]. Note
                 cls_out_channels should includes background.
-            all_bbox_preds (Tensor): Sigmoid outputs from the regression
+            outputs_kpts (Tensor): Sigmoid outputs from the regression
                 head with normalized coordinate format (cx, cy, w, h).
-                Shape [nb_dec, bs, num_query, 4].
+                Shape [nb_dec, bs, num_query, K*2].
             enc_outputs_class (Tensor): The score of each point on encode
                 feature map, has shape (N, h*w, num_class). Only when
                 as_two_stage is Ture it would be returned, otherwise
                 `None` would be returned.
-            enc_outputs_coord (Tensor): The proposal generate from the
-                encode feature map, has shape (N, h*w, 4). Only when
+            enc_outputs_kpt (Tensor): The proposal generate from the
+                encode feature map, has shape (N, h*w, K*2). Only when
                 as_two_stage is Ture it would be returned, otherwise
                 `None` would be returned.
         """
@@ -414,15 +413,15 @@ class PETRHead(AnchorFreeHead):
             x (list[Tensor]): Features from backbone.
             img_metas (list[dict]): Meta information of each image, e.g.,
                 image size, scaling factor, etc.
-            gt_bboxes (Tensor): Ground truth bboxes of the image,
+            gt_bboxes (list[Tensor]): Ground truth bboxes of the image,
                 shape (num_gts, 4).
-            gt_labels (Tensor): Ground truth labels of each box,
+            gt_labels (list[Tensor]): Ground truth labels of each box,
                 shape (num_gts,).
-            gt_keypoints (Tensor): Ground truth keypoints of the image,
+            gt_keypoints (list[Tensor]): Ground truth keypoints of the image,
                 shape (num_gts, K*3).
-            gt_areas (Tensor): Ground truth mask areas of each box,
+            gt_areas (list[Tensor]): Ground truth mask areas of each box,
                 shape (num_gts,).
-            gt_bboxes_ignore (Tensor): Ground truth bboxes to be
+            gt_bboxes_ignore (list[Tensor]): Ground truth bboxes to be
                 ignored, shape (num_ignored_gts, 4).
             proposal_cfg (mmcv.Config): Test / postprocessing configuration,
                 if None, test_cfg would be used.
@@ -716,9 +715,9 @@ class PETRHead(AnchorFreeHead):
                 - labels_list (list[Tensor]): Labels for all images.
                 - label_weights_list (list[Tensor]): Label weights for all
                     images.
-                - kpt_targets_list (list[Tensor]): Kpt targets for all
+                - kpt_targets_list (list[Tensor]): Keypoint targets for all
                     images.
-                - kpt_weights_list (list[Tensor]): Kpt weights for all
+                - kpt_weights_list (list[Tensor]): Keypoint weights for all
                     images.
                 - area_targets_list (list[Tensor]): area targets for all
                     images.

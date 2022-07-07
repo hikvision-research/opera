@@ -1,12 +1,14 @@
 # Copyright (c) Hikvision Research Institute. All rights reserved.
 from mmdet.models.detectors.single_stage import SingleStageDetector
-from opera.core.keypoint import bbox_kpt2result
 
+from opera.core.keypoint import bbox_kpt2result
 from ..builder import DETECTORS
 
 
 @DETECTORS.register_module
 class InsPose(SingleStageDetector):
+     """Implementation of `InsPose: Instance-Aware Networks for Single-Stage
+    Multi-Person Pose Estimation <https://arxiv.org/abs/2107.08982>`."""
 
     def __init__(self,
                  backbone,
@@ -59,7 +61,7 @@ class InsPose(SingleStageDetector):
         """Test function without test time augmentation.
 
         Args:
-            imgs (list[torch.Tensor]): List of multiple images
+            imgs (list[torch.Tensor]): List of multiple images.
             img_metas (list[dict]): List of image information.
             rescale (bool, optional): Whether to rescale the results.
                 Defaults to False.

@@ -59,11 +59,11 @@ def parse_requirements(fname='requirements.txt', with_version=True):
     specific versioning information.
 
     Args:
-        fname (str): path to requirements file
-        with_version (bool, default=False): if True include version specs
+        fname (str): path to requirements file.
+        with_version (bool, default=False): if True include version specs.
 
     Returns:
-        List[str]: list of requirements items
+        List[str]: list of requirements items.
 
     CommandLine:
         python -c "import setup; print(setup.parse_requirements())"

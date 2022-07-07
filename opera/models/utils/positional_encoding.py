@@ -30,7 +30,7 @@ class RelSinePositionalEncoding(BaseModule):
         offset (float): offset add to embed when do the normalization.
             Defaults to 0.
         init_cfg (dict or list[dict], optional): Initialization config dict.
-            Default: None
+            Default: None.
     """
 
     def __init__(self,

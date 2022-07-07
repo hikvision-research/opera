@@ -4,8 +4,7 @@ import math
 import torch
 import torch.nn as nn
 from torch.nn.init import normal_
-from mmcv.cnn import (build_activation_layer, build_norm_layer, constant_init,
-                      xavier_init)
+from mmcv.cnn import constant_init, xavier_init
 from mmcv.cnn.bricks.transformer import (BaseTransformerLayer,
                                          TransformerLayerSequence)
 from mmcv.ops.multi_scale_deform_attn import (MultiScaleDeformableAttention,
@@ -24,7 +23,7 @@ class SOITTransformer(DeformableDetrTransformer):
     """Implements the SOIT transformer.
 
     Args:
-        mask_channels (int): Number of channels of output mask feature
+        mask_channels (int): Number of channels of output mask feature.
         seg_encoder (obj:`ConfigDict`): ConfigDict is used for building the
             encoder for mask feature generation.
         num_feature_levels (int): Number of feature maps from FPN:
@@ -78,20 +77,18 @@ class SOITTransformer(DeformableDetrTransformer):
                 [bs, embed_dims, h, w].
             mlvl_masks (list(Tensor)): The key_padding_mask from
                 different level used for encoder and decoder,
-                each element has shape  [bs, h, w].
+                each element has shape [bs, h, w].
             query_embed (Tensor): The query embedding for decoder,
                 with shape [num_query, c].
             mlvl_pos_embeds (list(Tensor)): The positional encoding
                 of feats from different level, has the shape
                  [bs, embed_dims, h, w].
             reg_branches (obj:`nn.ModuleList`): Regression heads for
-                feature maps from each decoder layer. Only would
-                be passed when
-                `with_box_refine` is Ture. Default to None.
+                feature maps from each decoder layer. Only would be
+                passed when `with_box_refine` is Ture. Default to None.
             cls_branches (obj:`nn.ModuleList`): Classification heads
                 for feature maps from each decoder layer. Only would
-                 be passed when `as_two_stage`
-                 is Ture. Default to None.
+                be passed when `as_two_stage` is Ture. Default to None.
 
 
         Returns:
@@ -253,9 +250,7 @@ class SOITTransformer(DeformableDetrTransformer):
 @ATTENTION.register_module()
 class MultiScaleDeformablePoseAttention(BaseModule):
     """An attention module used in PETR. `End-to-End Multi-Person
-    Pose Estimation with Transformers.
-
-      <https://arxiv.org/pdf/2010.04159.pdf>`_.
+    Pose Estimation with Transformers`.
 
     Args:
         embed_dims (int): The embedding dimension of Attention.
@@ -345,23 +340,19 @@ class MultiScaleDeformablePoseAttention(BaseModule):
         Args:
             query (Tensor): Query of Transformer with shape
                 (num_query, bs, embed_dims).
-            key (Tensor): The key tensor with shape
-                `(num_key, bs, embed_dims)`.
+            key (Tensor): The key tensor with shape (num_key, bs, embed_dims).
             value (Tensor): The value tensor with shape
-                `(num_key, bs, embed_dims)`.
+                (num_key, bs, embed_dims).
             residual (Tensor): The tensor used for addition, with the
                 same shape as `x`. Default None. If None, `x` will be used.
             query_pos (Tensor): The positional encoding for `query`.
                 Default: None.
             key_pos (Tensor): The positional encoding for `key`. Default
                 None.
-            reference_points (Tensor):  The normalized reference
-                points with shape (bs, num_query, num_levels, 2),
-                all elements is range in [0, 1], top-left (0,0),
-                bottom-right (1, 1), including padding area.
-                or (N, Length_{query}, num_levels, 4), add
-                additional two dimensions is (w, h) to
-                form reference boxes.
+            reference_points (Tensor):  The normalized reference points with
+                shape (bs, num_query, num_levels, K*2), all elements is range
+                in [0, 1], top-left (0,0), bottom-right (1, 1), including
+                padding area.
             key_padding_mask (Tensor): ByteTensor for `query`, with
                 shape [bs, num_key].
             spatial_shapes (Tensor): Spatial shape of features in
@@ -372,7 +363,7 @@ class MultiScaleDeformablePoseAttention(BaseModule):
                 as [0, h_0*w_0, h_0*w_0+h_1*w_1, ...].
 
         Returns:
-             Tensor: forwarded results with shape [num_query, bs, embed_dims].
+            Tensor: forwarded results with shape [num_query, bs, embed_dims].
         """
 
         if key is None:
@@ -439,7 +430,7 @@ class MultiScaleDeformablePoseAttention(BaseModule):
 
 @TRANSFORMER_LAYER_SEQUENCE.register_module()
 class PetrTransformerDecoder(TransformerLayerSequence):
-    """Implements the decoder in DETR transformer.
+    """Implements the decoder in PETR transformer.
 
     Args:
         return_intermediate (bool): Whether to return intermediate outputs.
@@ -467,24 +458,20 @@ class PetrTransformerDecoder(TransformerLayerSequence):
         """Forward function for `TransformerDecoder`.
 
         Args:
-            query (Tensor): Input query with shape
-                `(num_query, bs, embed_dims)`.
-            reference_points (Tensor): The reference
-                points of offset. has shape
-                (bs, num_query, 4) when as_two_stage,
-                otherwise has shape ((bs, num_query, 2).
-            valid_ratios (Tensor): The radios of valid
-                points on the feature map, has shape
-                (bs, num_levels, 2)
-            reg_branch: (obj:`nn.ModuleList`): Used for
-                refining the regression results. Only would
-                be passed when with_box_refine is True,
-                otherwise would be passed a `None`.
+            query (Tensor): Input query with shape (num_query, bs, embed_dims).
+            reference_points (Tensor): The reference points of offset,
+                has shape (bs, num_query, K*2).
+            valid_ratios (Tensor): The radios of valid points on the feature
+                map, has shape (bs, num_levels, 2).
+            kpt_branches: (obj:`nn.ModuleList`): Used for refining the
+                regression results. Only would be passed when `with_box_refine`
+                is True, otherwise would be passed a `None`.
 
         Returns:
-            Tensor: Results with shape [1, num_query, bs, embed_dims] when
+            tuple (Tensor): Results with shape [1, num_query, bs, embed_dims] when
                 return_intermediate is `False`, otherwise it has shape
-                [num_layers, num_query, bs, embed_dims].
+                [num_layers, num_query, bs, embed_dims] and
+                [num_layers, bs, num_query, K*2].
         """
         output = query
         intermediate = []
@@ -574,7 +561,7 @@ class PETRTransformer(Transformer):
                          ffn_dropout=0.1,
                          operation_order=('self_attn', 'norm', 'cross_attn',
                                           'norm', 'ffn', 'norm'))),
-                 as_two_stage=False,
+                 as_two_stage=True,
                  num_feature_levels=4,
                  two_stage_num_proposals=300,
                  num_keypoints=17,
@@ -587,7 +574,6 @@ class PETRTransformer(Transformer):
         self.num_keypoints = num_keypoints
         self.init_layers()
         self.hm_encoder = build_transformer_layer_sequence(hm_encoder)
-        # self.hm_deconv = nn.ConvTranspose2d() # TODO: used for 1/4 resolution
         self.refine_decoder = build_transformer_layer_sequence(refine_decoder)
 
     def init_layers(self):
@@ -625,10 +611,9 @@ class PETRTransformer(Transformer):
         """Generate proposals from encoded memory.
 
         Args:
-            memory (Tensor) : The output of encoder,
-                has shape (bs, num_key, embed_dim).  num_key is
-                equal the number of points on feature map from
-                all level.
+            memory (Tensor): The output of encoder, has shape
+                (bs, num_key, embed_dim). num_key is equal the number of points
+                on feature map from all level.
             memory_padding_mask (Tensor): Padding mask for memory.
                 has shape (bs, num_key).
             spatial_shapes (Tensor): The shape of all feature maps.
@@ -637,13 +622,11 @@ class PETRTransformer(Transformer):
         Returns:
             tuple: A tuple of feature map and bbox prediction.
 
-                - output_memory (Tensor): The input of decoder,  \
-                    has shape (bs, num_key, embed_dim).  num_key is \
-                    equal the number of points on feature map from \
-                    all levels.
-                - output_proposals (Tensor): The normalized proposal \
-                    after a inverse sigmoid, has shape \
-                    (bs, num_keys, 4).
+                - output_memory (Tensor): The input of decoder, has shape
+                    (bs, num_key, embed_dim). num_key is equal the number of
+                    points on feature map from all levels.
+                - output_proposals (Tensor): The normalized proposal
+                    after a inverse sigmoid, has shape (bs, num_keys, 4).
         """
 
         N, S, C = memory.shape
@@ -691,13 +674,11 @@ class PETRTransformer(Transformer):
         """Get the reference points used in decoder.
 
         Args:
-            spatial_shapes (Tensor): The shape of all
-                feature maps, has shape (num_level, 2).
-            valid_ratios (Tensor): The radios of valid
-                points on the feature map, has shape
-                (bs, num_levels, 2)
-            device (obj:`device`): The device where
-                reference_points should be.
+            spatial_shapes (Tensor): The shape of all feature maps,
+                has shape (num_level, 2).
+            valid_ratios (Tensor): The radios of valid points on the
+                feature map, has shape (bs, num_levels, 2).
+            device (obj:`device`): The device where reference_points should be.
 
         Returns:
             Tensor: reference points used in decoder, has \
@@ -705,7 +686,6 @@ class PETRTransformer(Transformer):
         """
         reference_points_list = []
         for lvl, (H, W) in enumerate(spatial_shapes):
-            #  TODO  check this 0.5
             ref_y, ref_x = torch.meshgrid(
                 torch.linspace(
                     0.5, H - 0.5, H, dtype=torch.float32, device=device),
@@ -722,7 +702,7 @@ class PETRTransformer(Transformer):
         return reference_points
 
     def get_valid_ratio(self, mask):
-        """Get the valid radios of feature maps of all  level."""
+        """Get the valid radios of feature maps of all level."""
         _, H, W = mask.shape
         valid_H = torch.sum(~mask[:, :, 0], 1)
         valid_W = torch.sum(~mask[:, 0, :], 1)
@@ -760,53 +740,47 @@ class PETRTransformer(Transformer):
         """Forward function for `Transformer`.
 
         Args:
-            mlvl_feats (list(Tensor)): Input queries from
-                different level. Each element has shape
-                [bs, embed_dims, h, w].
-            mlvl_masks (list(Tensor)): The key_padding_mask from
-                different level used for encoder and decoder,
-                each element has shape  [bs, h, w].
+            mlvl_feats (list(Tensor)): Input queries from different level.
+                Each element has shape [bs, embed_dims, h, w].
+            mlvl_masks (list(Tensor)): The key_padding_mask from different
+                level used for encoder and decoder, each element has shape
+                [bs, h, w].
             query_embed (Tensor): The query embedding for decoder,
                 with shape [num_query, c].
             mlvl_pos_embeds (list(Tensor)): The positional encoding
                 of feats from different level, has the shape
                  [bs, embed_dims, h, w].
-            reg_branches (obj:`nn.ModuleList`): Regression heads for
-                feature maps from each decoder layer. Only would
-                be passed when
+            reg_branches (obj:`nn.ModuleList`): Regression heads for feature
+                maps from each decoder layer. Only would be passed when
                 `with_box_refine` is Ture. Default to None.
             kpt_branches (obj:`nn.ModuleList`): Keypoint Regression heads for
-                feature maps from each decoder layer. Only would
-                be passed when
+                feature maps from each decoder layer. Only would be passed when
                 `with_box_refine` is Ture. Default to None.
-            cls_branches (obj:`nn.ModuleList`): Classification heads
-                for feature maps from each decoder layer. Only would
-                 be passed when `as_two_stage`
-                 is Ture. Default to None.
+            cls_branches (obj:`nn.ModuleList`): Classification heads for
+                feature maps from each decoder layer. Only would be passed when
+                `as_two_stage` is Ture. Default to None.
 
 
         Returns:
             tuple[Tensor]: results of decoder containing the following tensor.
 
                 - inter_states: Outputs from decoder. If
-                    return_intermediate_dec is True output has shape \
-                      (num_dec_layers, bs, num_query, embed_dims), else has \
-                      shape (1, bs, num_query, embed_dims).
+                    `return_intermediate_dec` is True output has shape \
+                    (num_dec_layers, bs, num_query, embed_dims), else has \
+                    shape (1, bs, num_query, embed_dims).
                 - init_reference_out: The initial value of reference \
                     points, has shape (bs, num_queries, 4).
                 - inter_references_out: The internal value of reference \
                     points in decoder, has shape \
                     (num_dec_layers, bs,num_query, embed_dims)
-                - enc_outputs_class: The classification score of \
-                    proposals generated from \
-                    encoder's feature maps, has shape \
+                - enc_outputs_class: The classification score of proposals \
+                    generated from encoder's feature maps, has shape \
                     (batch, h*w, num_classes). \
                     Only would be returned when `as_two_stage` is True, \
                     otherwise None.
-                - enc_outputs_coord_unact: The regression results \
-                    generated from encoder's feature maps., has shape \
-                    (batch, h*w, 4). Only would \
-                    be returned when `as_two_stage` is True, \
+                - enc_outputs_kpt_unact: The regression results generated from \
+                    encoder's feature maps., has shape (batch, h*w, K*2).
+                    Only would be returned when `as_two_stage` is True, \
                     otherwise None.
         """
         assert self.as_two_stage or query_embed is not None
@@ -887,7 +861,6 @@ class PETRTransformer(Transformer):
             hm_proto = (hm_memory, mlvl_masks[0])
 
         if self.as_two_stage:
-            # TODO:
             output_memory, output_proposals = \
                 self.gen_encoder_output_proposals(
                     memory, mask_flatten, spatial_shapes)

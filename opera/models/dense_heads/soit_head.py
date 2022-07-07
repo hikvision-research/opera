@@ -5,7 +5,7 @@ import warnings
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from mmcv.cnn import Linear, bias_init_with_prob, constant_init, xavier_init
+from mmcv.cnn import Linear, bias_init_with_prob, constant_init
 from mmcv.runner import force_fp32
 from mmcv.ops.multi_scale_deform_attn import (
     MultiScaleDeformableAttnFunction, multi_scale_deformable_attn_pytorch)
@@ -22,7 +22,7 @@ from ..builder import HEADS
 
 @HEADS.register_module()
 class SOITHead(DETRHead):
-    """Head of SOIT: SOIT: Segmenting Objects with Instance-Aware Transformers.
+    """Head of SOIT: Segmenting Objects with Instance-Aware Transformers.
 
     More details can be found in the `paper
     <https://arxiv.org/abs/2112.11037>`_ .
@@ -106,7 +106,6 @@ class SOITHead(DETRHead):
         self.seg_branches = nn.ModuleList(
             [seg_branch for _ in range(num_pred - 1)])
 
-        
         if not self.as_two_stage:
             self.query_embedding = nn.Embedding(self.num_query,
                                                 self.embed_dims * 2)
@@ -191,8 +190,8 @@ class SOITHead(DETRHead):
                 `None` would be returned.
             mask_proto (Tuple[Tensor]): Mask feature and other information 
                 to create the input for dynamic encoder.
-            outputs_dynamic_params (Tensor): Dynamic parameters of all decoder layers,
-                has shape [nb_dec, bs, num_query, dynamic_params_dims].
+            outputs_dynamic_params (Tensor): Dynamic parameters of all decoder
+                layers, has shape [nb_dec, bs, num_query, dynamic_params_dims].
         """
 
         batch_size = mlvl_feats[0].size(0)
@@ -213,20 +212,24 @@ class SOITHead(DETRHead):
                 self.positional_encoding(mlvl_masks[-1]))
 
         p3_mask = F.interpolate(
-            img_masks[None], size=mlvl_feats[0].shape[-2:]).to(torch.bool).squeeze(0)
+            img_masks[None],
+            size=mlvl_feats[0].shape[-2:]).to(torch.bool).squeeze(0)
         self.p3_mask = p3_mask
 
         query_embeds = None
         if not self.as_two_stage:
             query_embeds = self.query_embedding.weight
         hs, init_reference, inter_references, \
-            enc_outputs_class, enc_outputs_coord, mask_proto = self.transformer(
+            enc_outputs_class, enc_outputs_coord, mask_proto = \
+                self.transformer(
                     mlvl_feats,
                     mlvl_masks,
                     query_embeds,
                     mlvl_positional_encodings,
-                    reg_branches=self.reg_branches if self.with_box_refine else None,  # noqa:E501
-                    cls_branches=self.cls_branches if self.as_two_stage else None  # noqa:E501
+                    reg_branches=self.reg_branches \
+                        if self.with_box_refine else None,  # noqa:E501
+                    cls_branches=self.cls_branches \
+                        if self.as_two_stage else None  # noqa:E501
             )
         hs = hs.permute(0, 2, 1, 3)
         outputs_classes = []
@@ -279,17 +282,14 @@ class SOITHead(DETRHead):
         """"Loss function.
 
         Args:
-            all_cls_scores (Tensor): Classification score of all
-                decoder layers, has shape
-                [nb_dec, bs, num_query, cls_out_channels].
-            all_bbox_preds (Tensor): Sigmoid regression
-                outputs of all decode layers. Each is a 4D-tensor with
-                normalized coordinate format (cx, cy, w, h) and shape
-                [nb_dec, bs, num_query, 4].
-            enc_cls_scores (Tensor): Classification scores of
-                points on encode feature map , has shape
-                (N, h*w, num_classes). Only be passed when as_two_stage is
-                True, otherwise is None.
+            all_cls_scores (Tensor): Classification score of all decoder
+                layers, has shape [nb_dec, bs, num_query, cls_out_channels].
+            all_bbox_preds (Tensor): Sigmoid regression outputs of all decoder
+                layers. Each is a 4D-tensor with normalized coordinate format
+                (cx, cy, w, h) and shape [nb_dec, bs, num_query, 4].
+            enc_cls_scores (Tensor): Classification scores of points on
+                encode feature map , has shape (N, h*w, num_classes).
+                Only be passed when as_two_stage is True, otherwise is None.
             enc_bbox_preds (Tensor): Regression results of each points
                 on the encode feature map, has shape (N, h*w, 4). Only be
                 passed when as_two_stage is True, otherwise is None.
@@ -301,8 +301,8 @@ class SOITHead(DETRHead):
                 with shape (num_gts, 4) in [tl_x, tl_y, br_x, br_y] format.
             gt_labels_list (list[Tensor]): Ground truth class indices for each
                 image with shape (num_gts, ).
-            gt_masks_list (list[Tensor]): Ground truth segmentation masks for each
-                image with shape (num_gts, img_h, img_w).
+            gt_masks_list (list[Tensor]): Ground truth segmentation masks for
+                each image with shape (num_gts, img_h, img_w).
             img_metas (list[dict]): List of image meta information.
             gt_bboxes_ignore (list[Tensor], optional): Bounding boxes
                 which can be ignored for each image. Default None.
@@ -344,9 +344,9 @@ class SOITHead(DETRHead):
             loss_dict['enc_loss_iou'] = enc_losses_iou
 
         losses_mask_dice, losses_mask_bce = multi_apply(
-            self.loss_mask_single, dynamic_params, all_cls_scores, 
-            all_bbox_preds, all_gt_bboxes_list, all_gt_labels_list, 
-            all_gt_masks_list, img_metas_list, all_gt_bboxes_ignore_list, 
+            self.loss_mask_single, dynamic_params, all_cls_scores,
+            all_bbox_preds, all_gt_bboxes_list, all_gt_labels_list,
+            all_gt_masks_list, img_metas_list, all_gt_bboxes_ignore_list,
             mask_proto=mask_proto)
 
         # loss from the last decoder layer
@@ -366,7 +366,7 @@ class SOITHead(DETRHead):
             loss_dict[f'd{num_dec_layer}.loss_mask_dice'] = loss_mask_dice_i
             loss_dict[f'd{num_dec_layer}.loss_mask_bce'] = loss_mask_bce_i
             num_dec_layer += 1
-        
+
         return loss_dict
 
     def loss_mask_single(self,
@@ -379,7 +379,7 @@ class SOITHead(DETRHead):
                          img_metas,
                          gt_bboxes_ignore_list,
                          mask_proto=None):
-        (seg_memory, seg_pos_embed, seg_mask, spatial_shapes, 
+        (seg_memory, seg_pos_embed, seg_mask, spatial_shapes,
         seg_reference_points, level_start_index, valid_ratios) = mask_proto
         num_imgs = cls_scores.size(0)
         cls_scores_list = [cls_scores[i] for i in range(num_imgs)]
@@ -389,7 +389,7 @@ class SOITHead(DETRHead):
                                                 img_metas, gt_bboxes_ignore_list)
         (labels_list, label_weights_list, bbox_targets_list, bbox_weights_list,
          num_total_pos, num_total_neg, gt_inds_list) = cls_reg_targets
-        
+
         num_total_pos = cls_scores.new_tensor([num_total_pos])
         num_total_pos = torch.clamp(reduce_mean(num_total_pos), min=1).item()
 
@@ -428,7 +428,8 @@ class SOITHead(DETRHead):
                         spatial_shapes=spatial_shapes,
                         level_start_index=level_start_index))
                 h, w = spatial_shapes[0]
-                mask_preds = [mask.squeeze().reshape(h, w) for mask in mask_preds]
+                mask_preds = [
+                    mask.squeeze().reshape(h, w) for mask in mask_preds]
                 mask_preds = torch.stack(mask_preds)
                 pad_mask = seg_mask[i].reshape(1, 1, h, w).float()
                 pad_mask = F.interpolate(
@@ -444,17 +445,22 @@ class SOITHead(DETRHead):
                     size=(4*h, 4*w),
                     mode='bilinear',
                     align_corners=True)[0]
-                loss_mask_dice += self.dice_loss(mask_preds, mask_targets).sum()
+                loss_mask_dice += self.dice_loss(mask_preds,
+                                                 mask_targets).sum()
                 loss_mask_bce += F.binary_cross_entropy(
-                    mask_preds, mask_targets, reduction='none').sum() / (~pad_mask).sum()
+                    mask_preds,
+                    mask_targets,
+                    reduction='none').sum() / (~pad_mask).sum()
             else:
                 loss_mask_dice += (pos_dynamic_params.sum() * 
                     seg_memory[:, i, :].sum() * seg_pos_embed.sum())
                 loss_mask_bce += (pos_dynamic_params.sum() * 
                     seg_memory[:, i, :].sum() * seg_pos_embed.sum())
 
-        loss_mask_dice = (loss_mask_dice / num_total_pos) * self.dice_mask_loss_weight
-        loss_mask_bce = (loss_mask_bce / num_total_pos) * self.bce_mask_loss_weight
+        loss_mask_dice = (loss_mask_dice / num_total_pos) * \
+            self.dice_mask_loss_weight
+        loss_mask_bce = (loss_mask_bce / num_total_pos) * \
+            self.bce_mask_loss_weight
         
         return loss_mask_dice, loss_mask_bce
 
@@ -506,10 +512,10 @@ class SOITHead(DETRHead):
             gt_bboxes_ignore_list for _ in range(num_imgs)
         ]
 
-        (labels_list, label_weights_list, bbox_targets_list,
-         bbox_weights_list, pos_inds_list, neg_inds_list, gt_inds_list) = multi_apply(
-             self._get_target_single_mask, cls_scores_list, bbox_preds_list,
-             gt_bboxes_list, gt_labels_list, img_metas, gt_bboxes_ignore_list)
+        (labels_list, label_weights_list, bbox_targets_list, bbox_weights_list,
+         pos_inds_list, neg_inds_list, gt_inds_list) = multi_apply(
+            self._get_target_single_mask, cls_scores_list, bbox_preds_list,
+            gt_bboxes_list, gt_labels_list, img_metas, gt_bboxes_ignore_list)
         num_total_pos = sum((inds.numel() for inds in pos_inds_list))
         num_total_neg = sum((inds.numel() for inds in neg_inds_list))
         return (labels_list, label_weights_list, bbox_targets_list,
@@ -598,17 +604,14 @@ class SOITHead(DETRHead):
         """Transform network outputs for a batch into bbox and mask predictions.
 
         Args:
-            all_cls_scores (Tensor): Classification score of all
-                decoder layers, has shape
-                [nb_dec, bs, num_query, cls_out_channels].
-            all_bbox_preds (Tensor): Sigmoid regression
-                outputs of all decode layers. Each is a 4D-tensor with
-                normalized coordinate format (cx, cy, w, h) and shape
-                [nb_dec, bs, num_query, 4].
-            enc_cls_scores (Tensor): Classification scores of
-                points on encode feature map , has shape
-                (N, h*w, num_classes). Only be passed when as_two_stage is
-                True, otherwise is None.
+            all_cls_scores (Tensor): Classification score of all decoder
+                layers, has shape [nb_dec, bs, num_query, cls_out_channels].
+            all_bbox_preds (Tensor): Sigmoid regression outputs of all decoder
+                layers. Each is a 4D-tensor with normalized coordinate format
+                (cx, cy, w, h) and shape [nb_dec, bs, num_query, 4].
+            enc_cls_scores (Tensor): Classification scores of points on
+                encode feature map , has shape (N, h*w, num_classes).
+                Only be passed when as_two_stage is True, otherwise is None.
             enc_bbox_preds (Tensor): Regression results of each points
                 on the encode feature map, has shape (N, h*w, 4). Only be
                 passed when as_two_stage is True, otherwise is None.
@@ -632,7 +635,7 @@ class SOITHead(DETRHead):
         cls_scores = all_cls_scores[-1]
         bbox_preds = all_bbox_preds[-1]
         dynamic_params = dynamic_params[-1]
-        (seg_memory, seg_pos_embed, seg_mask, spatial_shapes, 
+        (seg_memory, seg_pos_embed, seg_mask, spatial_shapes,
          seg_reference_points, level_start_index, valid_ratios) = mask_proto
         result_list = []
         for img_id in range(len(img_metas)):
@@ -648,8 +651,8 @@ class SOITHead(DETRHead):
             scale_factor = img_metas[img_id]['scale_factor']
             proposals = self._get_bboxes_single(
                 cls_score, bbox_pred, dynamic_param, single_seg_memory,
-                single_seg_pos_embed, single_seg_mask, single_seg_reference_points,
-                level_start_index, spatial_shapes,
+                single_seg_pos_embed, single_seg_mask,
+                single_seg_reference_points, level_start_index, spatial_shapes,
                 img_shape, ori_shape, scale_factor, rescale)
             result_list.append(proposals)
         return result_list
@@ -700,20 +703,22 @@ class SOITHead(DETRHead):
         num_res = dynamic_params.size(0)
         for i in range(dynamic_params.size(0)):
             seg_pos_embed = self.mask_positional_encoding(img_mask, cxcy[i])
-            seg_pos_embed = seg_pos_embed.flatten(2).transpose(1, 2).permute(1, 0, 2)
+            seg_pos_embed = \
+                seg_pos_embed.flatten(2).transpose(1, 2).permute(1, 0, 2)
             seg_pos_embeds.append(seg_pos_embed)
         seg_pos_embeds = torch.cat(seg_pos_embeds, dim=1)
         seg_memory = seg_memory.repeat(1, num_res, 1)
         seg_reference_points = seg_reference_points.repeat(num_res, 1, 1, 1)
-        mask_preds = self.dynamic_encoder.forward_test(dynamic_params,
-                                                       seg_memory,
-                                                       None,
-                                                       None,
-                                                       query_pos=seg_pos_embeds,
-                                                       key_padding_mask=seg_mask,
-                                                       reference_points=seg_reference_points,
-                                                       spatial_shapes=spatial_shapes,
-                                                       level_start_index=level_start_index)
+        mask_preds = self.dynamic_encoder.forward_test(
+            dynamic_params,
+            seg_memory,
+            None,
+            None,
+            query_pos=seg_pos_embeds,
+            key_padding_mask=seg_mask,
+            reference_points=seg_reference_points,
+            spatial_shapes=spatial_shapes,
+            level_start_index=level_start_index)
         h, w = spatial_shapes[0]
         mask_preds = mask_preds.squeeze().reshape(num_res, h, w)
 
@@ -847,8 +852,8 @@ class DynamicDeformableAttention(BaseModule):
                 same shape as `x`. Default None. If None, `x` will be used.
             query_pos (Tensor): The positional encoding for `query`.
                 Default: None.
-            key_pos (Tensor): The positional encoding for `key`. Default
-                None.
+            key_padding_mask (Tensor): ByteTensor for `query`, with
+                shape [bs, num_key].
             reference_points (Tensor):  The normalized reference
                 points with shape (bs, num_query, num_levels, 2),
                 all elements is range in [0, 1], top-left (0,0),
@@ -856,8 +861,6 @@ class DynamicDeformableAttention(BaseModule):
                 or (N, Length_{query}, num_levels, 4), add
                 additional two dimensions is (w, h) to
                 form reference boxes.
-            key_padding_mask (Tensor): ByteTensor for `query`, with
-                shape [bs, num_key].
             spatial_shapes (Tensor): Spatial shape of features in
                 different level. With shape  (num_levels, 2),
                 last dimension represent (h, w).
@@ -910,7 +913,7 @@ class DynamicDeformableAttention(BaseModule):
                                                    self.num_heads,
                                                    self.num_levels,
                                                    self.num_points)
-  
+
         if reference_points.shape[-1] == 2:
             offset_normalizer = torch.stack(
                 [spatial_shapes[..., 1], spatial_shapes[..., 0]], -1)
@@ -936,7 +939,8 @@ class DynamicDeformableAttention(BaseModule):
                 attention_weights, self.im2col_step)
 
         output = output.relu()     
-        output = F.linear(output, output_proj_weights, output_proj_bias).permute(1, 0, 2)
+        output = F.linear(
+            output, output_proj_weights, output_proj_bias).permute(1, 0, 2)
         return output
 
     def forward_test(self,
@@ -983,13 +987,15 @@ class DynamicDeformableAttention(BaseModule):
         output_proj_weights = dynamic_params[:, 432:440].reshape(bs * 1, 8, 1)
         output_proj_bias = dynamic_params[:, 440].reshape(bs * 1)
         sampling_offsets = F.conv1d(
-            query, sampling_offsets_weight, sampling_offsets_bias, groups=bs).view(
-                bs, self.num_heads, self.num_levels, self.num_points, 2, num_query).permute(
-                    0, 5, 1, 2, 3, 4).contiguous()
+            query, sampling_offsets_weight, sampling_offsets_bias, \
+                groups=bs).view(bs, self.num_heads, self.num_levels, \
+                    self.num_points, 2, num_query).permute(
+                        0, 5, 1, 2, 3, 4).contiguous()
         attention_weights = F.conv1d(
-            query, attention_weights_weight, attention_weights_bias, groups=bs).view(
-                bs, self.num_heads, self.num_levels * self.num_points, num_query).permute(
-                    0, 3, 1, 2).contiguous()
+            query, attention_weights_weight, attention_weights_bias, \
+                groups=bs).view(bs, self.num_heads, \
+                    self.num_levels * self.num_points, num_query).permute(
+                        0, 3, 1, 2).contiguous()
 
         attention_weights = attention_weights.softmax(-1)
 
@@ -997,7 +1003,7 @@ class DynamicDeformableAttention(BaseModule):
                                                    self.num_heads,
                                                    self.num_levels,
                                                    self.num_points)
-  
+
         if reference_points.shape[-1] == 2:
             offset_normalizer = torch.stack(
                 [spatial_shapes[..., 1], spatial_shapes[..., 0]], -1)
@@ -1024,8 +1030,10 @@ class DynamicDeformableAttention(BaseModule):
         output = output.relu()
 
         output = output.permute(0, 2, 1).reshape(1, -1, num_query)
-        output = F.conv1d(
-            output, output_proj_weights, output_proj_bias, groups=bs).permute(1, 0, 2)
+        output = F.conv1d(output,
+                          output_proj_weights,
+                          output_proj_bias,
+                          groups=bs).permute(1, 0, 2)
         return output
 
 

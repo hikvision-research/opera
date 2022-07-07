@@ -62,17 +62,17 @@ def _concat_dataset(cfg, default_args=None):
 def build_dataset(cfg, default_args=None):
     if isinstance(cfg, (list, tuple)):
         dataset = ConcatDataset([build_dataset(c, default_args) for c in cfg])
-    elif cfg['type'] == 'ConcatDataset':
+    elif cfg['type'] == 'mmdet.ConcatDataset':
         dataset = ConcatDataset(
             [build_dataset(c, default_args) for c in cfg['datasets']],
             cfg.get('separate_eval', True))
-    elif cfg['type'] == 'RepeatDataset':
+    elif cfg['type'] == 'mmdet.RepeatDataset':
         dataset = RepeatDataset(
             build_dataset(cfg['dataset'], default_args), cfg['times'])
-    elif cfg['type'] == 'ClassBalancedDataset':
+    elif cfg['type'] == 'mmdet.ClassBalancedDataset':
         dataset = ClassBalancedDataset(
             build_dataset(cfg['dataset'], default_args), cfg['oversample_thr'])
-    elif cfg['type'] == 'MultiImageMixDataset':
+    elif cfg['type'] == 'mmdet.MultiImageMixDataset':
         cp_cfg = copy.deepcopy(cfg)
         cp_cfg['dataset'] = build_dataset(cp_cfg['dataset'])
         cp_cfg.pop('type')

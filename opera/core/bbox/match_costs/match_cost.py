@@ -9,13 +9,13 @@ from .builder import MATCH_COST
 class KptL1Cost(object):
     """KptL1Cost.
 
-     Args:
-         weight (int | float, optional): loss_weight
+    Args:
+        weight (int | float, optional): loss_weight.
 
-     Examples:
-         >>> from mmdet.core.bbox.match_costs.match_cost import KptL1Cost
-         >>> import torch
-         >>> self = KptL1Cost()
+    Examples:
+        >>> from opera.core.bbox.match_costs.match_cost import KptL1Cost
+        >>> import torch
+        >>> self = KptL1Cost()
     """
 
     def __init__(self, weight=1.0):
@@ -33,7 +33,7 @@ class KptL1Cost(object):
                 Shape [num_gt, K].
 
         Returns:
-            torch.Tensor: bbox_cost value with weight
+            torch.Tensor: bbox_cost value with weight.
         """
         kpt_cost = []
         for i in range(len(gt_keypoints)):
@@ -57,13 +57,13 @@ class KptL1Cost(object):
 class OksCost(object):
     """OksCost.
 
-     Args:
-         weight (int | float, optional): loss_weight
+    Args:
+        weight (int | float, optional): loss_weight.
 
-     Examples:
-         >>> from mmdet.core.bbox.match_costs.match_cost import KptL1Cost
-         >>> import torch
-         >>> self = OksCost()
+    Examples:
+        >>> from opera.core.bbox.match_costs.match_cost import OksCost
+        >>> import torch
+        >>> self = OksCost()
     """
 
     def __init__(self, num_keypoints=17, weight=1.0):
@@ -104,7 +104,7 @@ class OksCost(object):
             gt_areas (Tensor): Ground truth mask areas. Shape [num_gt,].
 
         Returns:
-            torch.Tensor: bbox_cost value with weight
+            torch.Tensor: bbox_cost value with weight.
         """
         sigmas = torch.from_numpy(self.sigmas).to(kpt_pred.device)
         variances = (sigmas * 2)**2

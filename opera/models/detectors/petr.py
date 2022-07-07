@@ -5,7 +5,7 @@ import numpy as np
 import torch
 from matplotlib.collections import PatchCollection
 from matplotlib.patches import Polygon, Circle
-from mmdet.core.visualization import imshow_det_bboxes, color_val_matplotlib
+from mmdet.core.visualization import color_val_matplotlib
 from mmdet.core import bbox_mapping_back, multiclass_nms
 from mmdet.models.detectors.single_stage import SingleStageDetector
 from mmdet.models.detectors.detr import DETR
@@ -114,8 +114,8 @@ class PETR(DETR):
         """Merge augmented detection bboxes and keypoints.
 
         Args:
-            aug_bboxes (list[Tensor]): shape (n, 4*#class).
-            aug_kpts (list[Tensor] or None): shape (n, 17, 2).
+            aug_bboxes (list[Tensor]): shape (n, 4).
+            aug_kpts (list[Tensor] or None): shape (n, K, 2).
             img_metas (list): meta information.
 
         Returns:
@@ -152,7 +152,7 @@ class PETR(DETR):
             # only one image in the batch
             outs = self.bbox_head(x, img_meta)
             bbox_list = self.bbox_head.get_bboxes(
-                *outs, img_meta, rescale=rescale)
+                *outs, img_meta, rescale=False)
 
             for det_bboxes, det_labels, det_kpts in bbox_list:
                 aug_bboxes.append(det_bboxes[:, :4])
@@ -339,25 +339,6 @@ class PETR(DETR):
                 segms = segms[inds, ...]
             if keypoints is not None:
                 keypoints = keypoints[inds, ...]
-
-        mask_colors = []
-        if labels.shape[0] > 0:
-            if mask_color is None:
-                # random color
-                np.random.seed(42)
-                mask_colors = [
-                    np.random.randint(0, 256, (1, 3), dtype=np.uint8)
-                    for _ in range(max(labels) + 1)
-                ]
-            else:
-                # specify  color
-                mask_colors = [
-                    np.array(mmcv.color_val(mask_color)[::-1], dtype=np.uint8)
-                ] * (
-                    max(labels) + 1)
-
-        bbox_color = color_val_matplotlib(bbox_color)
-        # text_color = color_val_matplotlib(text_color)
 
         num_keypoint = keypoints.shape[1]
         if num_keypoint == 14:

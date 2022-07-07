@@ -131,10 +131,11 @@ def draw_short_range_offset(offset_map, mask_map, gt_kp, radius):
 
 def weighted_neg_loss(pred, gt, weight):
     """Modified focal loss. Exactly the same as CornerNet.
-      Runs faster and costs a little bit more memory
-    Arguments:
-      pred (batch x c x h x w)
-      gt_regr (batch x c x h x w)
+    Runs faster and costs a little bit more memory.
+
+    Args:
+        pred (Tensor): [bs, c, h, w]
+        gt_regr (Tensor): [bs, c, h, w]
     """
     pos_inds = gt.eq(1).float()
     neg_inds = gt.lt(1).float() * weight.lt(1).float()
@@ -162,13 +163,13 @@ def bbox_kpt2result(bboxes, labels, kpts, num_classes):
     """Convert detection results to a list of numpy arrays.
 
     Args:
-        bboxes (torch.Tensor | np.ndarray): shape (n, 5)
-        labels (torch.Tensor | np.ndarray): shape (n, )
-        kpts (torch.Tensor | np.ndarray): shape (n, K*3)
-        num_classes (int): class number, including background class
+        bboxes (torch.Tensor | np.ndarray): shape (n, 5).
+        labels (torch.Tensor | np.ndarray): shape (n, ).
+        kpts (torch.Tensor | np.ndarray): shape (n, K*3).
+        num_classes (int): class number, including background class.
 
     Returns:
-        list(ndarray): bbox results of each class
+        list(ndarray): bbox results of each class.
     """
     if bboxes.shape[0] == 0:
         return [np.zeros((0, 5), dtype=np.float32) for i in range(num_classes)], \
@@ -187,11 +188,11 @@ def kpt_flip(kpts, img_shape, flip_pairs, direction):
     """Flip keypoints horizontally or vertically.
 
     Args:
-        kpts (Tensor): Shape (..., 2)
+        kpts (Tensor): Shape (..., 2).
         img_shape (tuple): Image shape.
         flip_pairs (list): Flip pair index.
         direction (str): Flip direction, only "horizontal" is supported now.
-            Default: "horizontal"
+            Default: "horizontal".
 
     Returns:
         Tensor: Flipped bboxes.

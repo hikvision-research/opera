@@ -9,7 +9,7 @@ from ..builder import DETECTORS
 @DETECTORS.register_module()
 class SOIT(DETR):
     """Implementation of `SOIT: Segmenting Objects with 
-    Instance-Aware Transformers <https://arxiv.org/abs/2112.11037>`"""
+    Instance-Aware Transformers <https://arxiv.org/abs/2112.11037>`."""
 
     def __init__(self, *args, **kwargs):
         super(DETR, self).__init__(*args, **kwargs)
@@ -32,7 +32,7 @@ class SOIT(DETR):
         """Test function without test time augmentation.
 
         Args:
-            imgs (list[torch.Tensor]): List of multiple images
+            imgs (list[torch.Tensor]): List of multiple images.
             img_metas (list[dict]): List of image information.
             rescale (bool, optional): Whether to rescale the results.
                 Defaults to False.

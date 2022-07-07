@@ -1,6 +1,5 @@
 # Copyright (c) Hikvision Research Institute. All rights reserved.
 import torch
-from mmdet.core.bbox.transforms import bbox_cxcywh_to_xyxy
 from mmdet.core.bbox.assigners.assign_result import AssignResult
 from mmdet.core.bbox.assigners.base_assigner import BaseAssigner
 
@@ -25,8 +24,8 @@ class PoseHungarianAssigner(BaseAssigner):
     are treated as backgrounds. Thus each query prediction will be assigned
     with `0` or a positive integer indicating the ground truth index:
 
-    - 0: negative sample, no assigned gt
-    - positive integer: positive sample, index (1-based) of assigned gt
+    - 0: negative sample, no assigned gt.
+    - positive integer: positive sample, index (1-based) of assigned gt.
 
     Args:
         cls_weight (int | float, optional): The scale factor for classification
@@ -38,7 +37,7 @@ class PoseHungarianAssigner(BaseAssigner):
     """
 
     def __init__(self,
-                 cls_cost=dict(type='ClassificationCost', weight=1.),
+                 cls_cost=dict(type='ClassificationCost', weight=1.0),
                  kpt_cost=dict(type='KptL1Cost', weight=1.0),
                  oks_cost=dict(type='OksCost', weight=1.0)):
         self.cls_cost = build_match_cost(cls_cost)

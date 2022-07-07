@@ -44,13 +44,13 @@ def oks_loss(pred,
 
     Args:
         pred (torch.Tensor): Predicted poses of format (x1, y1, x2, y2, ...),
-            shape (n, 2K).
-        target (torch.Tensor): Corresponding gt poses, shape (n, 2K).
+            shape (n, K*2).
+        target (torch.Tensor): Corresponding gt poses, shape (n, K*2).
         linear (bool, optional): If True, use linear scale of loss instead of
             log scale. Default: False.
         eps (float): Eps to avoid log(0).
 
-    Return:
+    Returns:
         torch.Tensor: Loss tensor.
     """
     oks = oks_overlaps(pred, target, valid, area, sigmas).clamp(min=eps)
@@ -63,7 +63,7 @@ def oks_loss(pred,
 
 @LOSSES.register_module()
 class OKSLoss(nn.Module):
-    """IoULoss.
+    """OKSLoss.
 
     Computing the oks loss between a set of predicted poses and target poses.
 
