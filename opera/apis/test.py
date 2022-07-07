@@ -12,7 +12,7 @@ from mmcv.image import tensor2imgs
 from mmcv.runner import get_dist_info
 from mmdet.core import encode_mask_results
 
-SEG_ALG = ['MaskRCNN', 'MaskScoringRCNN']
+SEG_ALG = ['SOIT', 'MaskRCNN', 'MaskScoringRCNN']
 
 
 def single_gpu_test(model,

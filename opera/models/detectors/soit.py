@@ -2,7 +2,6 @@
 from mmdet.core import bbox2result
 from mmdet.models.detectors.detr import DETR
 from mmdet.models.detectors.single_stage import SingleStageDetector
-from mmdet.core import encode_mask_results
 
 from ..builder import DETECTORS
 
@@ -54,7 +53,7 @@ class SOIT(DETR):
             for det_bboxes, det_labels, det_masks in bbox_list
         ]
         mask_results = [res[2] for res in bbox_list]
-        results = [(bbox_results, encode_mask_results(mask_results))
+        results = [(bbox_results, mask_results)
             for bbox_results, mask_results in zip(bbox_results, mask_results)]
 
         return results
