@@ -347,8 +347,6 @@ class MultiScaleDeformablePoseAttention(BaseModule):
                 same shape as `x`. Default None. If None, `x` will be used.
             query_pos (Tensor): The positional encoding for `query`.
                 Default: None.
-            key_pos (Tensor): The positional encoding for `key`. Default
-                None.
             reference_points (Tensor):  The normalized reference points with
                 shape (bs, num_query, num_levels, K*2), all elements is range
                 in [0, 1], top-left (0,0), bottom-right (1, 1), including
