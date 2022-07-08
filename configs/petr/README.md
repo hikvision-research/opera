@@ -17,7 +17,19 @@
 | PETR  |  Swin-L  |  100e   |     N     | 71.7 |      90.0       |      78.3       |      77.5      |      72.0      |      65.8      | [config](https://github.com/hikvision-research/opera/blob/main/configs/petr/petr_swin-l-p4-w7-224-22kto1k_16x1_100e_crowdpose.py) | [model](https://drive.google.com/file/d/1aS-TIFuSC2gVfmr5n4qrtmQSLFTbP6Lm/view?usp=sharing) |
 | PETR  |  Swin-L  |  100e   |     Y     | 72.3 |      90.8       |      78.8       |      78.7      |      72.9      |      65.5      | [config](https://github.com/hikvision-research/opera/blob/main/configs/petr/petr_swin-l-p4-w7-224-22kto1k_16x1_100e_crowdpose_flip_test.py) | [model](https://drive.google.com/file/d/1aS-TIFuSC2gVfmr5n4qrtmQSLFTbP6Lm/view?usp=sharing) |
 
-# NOTE
+## NOTE
 
 1. Swin-L are trained with batch size 16 due to GPU memory limitation.
 2. The performance is unstable. `PETR` may fluctuate about 0.2 mAP.
+
+## Citation
+
+```BibTeX
+@inproceedings{shi2022end,
+  title={End-to-End Multi-Person Pose Estimation With Transformers},
+  author={Shi, Dahu and Wei, Xing and Li, Liangqi and Ren, Ye and Tan, Wenming},
+  booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition},
+  pages={11069--11078},
+  year={2022}
+}
+```
