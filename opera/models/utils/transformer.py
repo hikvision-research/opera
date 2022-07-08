@@ -748,16 +748,12 @@ class PETRTransformer(Transformer):
             mlvl_pos_embeds (list(Tensor)): The positional encoding
                 of feats from different level, has the shape
                  [bs, embed_dims, h, w].
-            reg_branches (obj:`nn.ModuleList`): Regression heads for feature
-                maps from each decoder layer. Only would be passed when
-                `with_box_refine` is Ture. Default to None.
             kpt_branches (obj:`nn.ModuleList`): Keypoint Regression heads for
                 feature maps from each decoder layer. Only would be passed when
                 `with_box_refine` is Ture. Default to None.
             cls_branches (obj:`nn.ModuleList`): Classification heads for
                 feature maps from each decoder layer. Only would be passed when
                 `as_two_stage` is Ture. Default to None.
-
 
         Returns:
             tuple[Tensor]: results of decoder containing the following tensor.
