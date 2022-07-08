@@ -1,7 +1,7 @@
 # Copyright (c) Hikvision Research Institute. All rights reserved.
 from mmcv.parallel import DataContainer as DC
-from mmdet.datasets.pipelines.formating import to_tensor
-from mmdet.datasets.pipelines.formating import DefaultFormatBundle \
+from mmdet.datasets.pipelines.formatting import to_tensor
+from mmdet.datasets.pipelines.formatting import DefaultFormatBundle \
     as MMDetDefaultFormatBundle
 
 from ..builder import PIPELINES
