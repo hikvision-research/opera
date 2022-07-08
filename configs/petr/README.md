@@ -2,11 +2,20 @@
 
 ## Results and Models
 
+### COCO
+
 | Model | Backbone | Lr schd | mAP  | AP<sup>50</sup> | AP<sup>75</sup> | AP<sup>M</sup> | AP<sup>L</sup> | Download |
 |:-----:|:--------:|:-------:|:----:|:---------------:|:---------------:|:--------------:|:--------------:|:--------:|
 | PETR  |  R-50    |  100e   | 68.8 |      87.5       |      76.3       |      62.7      |      77.7      |[model](https://drive.google.com/file/d/1HcwraqWdZ3CaGMQOJHY8exNem7UnFkfS/view?usp=sharing) |
 | PETR  |  R-101   |  100e   | 70.0 |      88.5       |      77.5       |      63.6      |      79.4      |[model](https://drive.google.com/file/d/1O261Jrt4JRGlIKTmLtPy3AUruwX1hsDf/view?usp=sharing) |
 | PETR  |  Swin-L  |  100e   | 73.1 |      90.7       |      80.9       |      67.2      |      81.7      |[model](https://drive.google.com/file/d/1ujL0Gm5tPjweT0-gdDGkTc7xXrEt6gBP/view?usp=sharing) |
+
+### CrowdPose
+
+| Model | Backbone | Lr schd | Flip test | mAP  | AP<sup>50</sup> | AP<sup>75</sup> | AP<sup>E</sup> | AP<sup>M</sup> | AP<sup>H</sup> | Download |
+|:-----:|:--------:|:-------:|:---------:|:----:|:---------------:|:---------------:|:--------------:|:--------------:|:--------------:|:--------:|
+| PETR  |  Swin-L  |  100e   |     N     | 71.7 |      90.0       |      78.3       |      77.5      |      72.0      |      65.8      |[model](https://drive.google.com/file/d/1aS-TIFuSC2gVfmr5n4qrtmQSLFTbP6Lm/view?usp=sharing) |
+| PETR  |  Swin-L  |  100e   |     Y     | 72.3 |      90.8       |      78.8       |      78.7      |      72.9      |      65.5      |[model](https://drive.google.com/file/d/1aS-TIFuSC2gVfmr5n4qrtmQSLFTbP6Lm/view?usp=sharing) |
 
 # NOTE
 

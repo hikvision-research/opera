@@ -206,9 +206,16 @@ def kpt_flip(kpts, img_shape, flip_pairs, direction):
     return flipped
 
 
-def kpt_mapping_back(kpts, img_shape, scale_factor, flip, flip_pairs,
-                     flip_direction):
+def kpt_mapping_back(kpts, img_shape, scale_factor, flip, flip_direction):
     """Map keypoints from testing scale to original image scale."""
+    if kpts.shape[1] == 17:
+        from opera.datasets import CocoPoseDataset
+        flip_pairs = CocoPoseDataset.FLIP_PAIRS
+    elif kpts.shape[1] == 14:
+        from opera.datasets import CrowdPoseDataset
+        flip_pairs = CrowdPoseDataset.FLIP_PAIRS
+    else:
+        raise NotImplementedError
     new_kpts = kpt_flip(kpts, img_shape, flip_pairs, flip_direction) \
         if flip else kpts
     new_kpts = new_kpts.view(-1, 2) / new_kpts.new_tensor(scale_factor[:2])

@@ -131,7 +131,6 @@ class PETR(DETR):
             bboxes = bbox_mapping_back(bboxes, img_shape, scale_factor, flip,
                                        flip_direction)
             kpts = kpt_mapping_back(kpts, img_shape, scale_factor, flip,
-                                    self.test_cfg['flip_pairs'],
                                     flip_direction)
             recovered_bboxes.append(bboxes)
             recovered_kpts.append(kpts)
