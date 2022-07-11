@@ -35,11 +35,7 @@ def single_gpu_test(model,
                 img_tensor = data['img'][0]
             else:
                 img_tensor = data['img'][0].data[0]
-            try:
-                img_metas = data['img_metas'][0].data[0]
-            except:
-                # mmdetv1 use 'img_meta'
-                img_metas = data['img_meta'][0].data[0]
+            img_metas = data['img_metas'][0].data[0]
             imgs = tensor2imgs(img_tensor, **img_metas[0]['img_norm_cfg'])
             assert len(imgs) == len(img_metas)
 
@@ -119,11 +115,11 @@ def multi_gpu_test(model, data_loader, tmpdir=None, gpu_collect=False):
                     result = [(bbox_results, encode_mask_results(mask_results))
                             for bbox_results, mask_results in result]
                 # This logic is only used in panoptic segmentation test.
-            elif isinstance(result[0], dict) and 'ins_results' in result[0]:
-                for j in range(len(result)):
-                    bbox_results, mask_results = result[j]['ins_results']
-                    result[j]['ins_results'] = (
-                        bbox_results, encode_mask_results(mask_results))
+                elif isinstance(result[0], dict) and 'ins_results' in result[0]:
+                    for j in range(len(result)):
+                        bbox_results, mask_results = result[j]['ins_results']
+                        result[j]['ins_results'] = (
+                            bbox_results, encode_mask_results(mask_results))
 
         results.extend(result)
 
