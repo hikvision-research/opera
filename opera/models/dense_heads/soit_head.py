@@ -288,7 +288,7 @@ class SOITHead(DETRHead):
                 layers. Each is a 4D-tensor with normalized coordinate format
                 (cx, cy, w, h) and shape [nb_dec, bs, num_query, 4].
             enc_cls_scores (Tensor): Classification scores of points on
-                encode feature map , has shape (N, h*w, num_classes).
+                encode feature map, has shape (N, h*w, num_classes).
                 Only be passed when as_two_stage is True, otherwise is None.
             enc_bbox_preds (Tensor): Regression results of each points
                 on the encode feature map, has shape (N, h*w, 4). Only be
@@ -610,7 +610,7 @@ class SOITHead(DETRHead):
                 layers. Each is a 4D-tensor with normalized coordinate format
                 (cx, cy, w, h) and shape [nb_dec, bs, num_query, 4].
             enc_cls_scores (Tensor): Classification scores of points on
-                encode feature map , has shape (N, h*w, num_classes).
+                encode feature map, has shape (N, h*w, num_classes).
                 Only be passed when as_two_stage is True, otherwise is None.
             enc_bbox_preds (Tensor): Regression results of each points
                 on the encode feature map, has shape (N, h*w, 4). Only be
