@@ -3,6 +3,3 @@ numpy
 pycocotools
 six
 terminaltables
-SharedArray==3.1.0
-shapely
-tqdm==4.28.1
