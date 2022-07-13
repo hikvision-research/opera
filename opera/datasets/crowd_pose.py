@@ -1,12 +1,17 @@
 # Copyright (c) Hikvision Research Institute. All rights reserved.
 import logging
 from collections import OrderedDict
-from xtcocotools.coco import COCO
-from xtcocotools.cocoeval import COCOeval
 
 import mmcv
 import numpy as np
 from mmcv.utils import print_log
+
+try:
+    from xtcocotools.coco import COCO
+    from xtcocotools.cocoeval import COCOeval
+except ImportError:
+    COCO = None
+    COCOeval = None
 
 from .builder import DATASETS
 from .coco_pose import CocoPoseDataset
@@ -50,7 +55,8 @@ class CrowdPoseDataset(CocoPoseDataset):
         Returns:
             list[dict]: Annotation info from COCO api.
         """
-
+        if COCO is None:
+            raise RuntimeError('xtcocotools is not installed')
         self.coco = COCO(ann_file)
         self.cat_ids = self.coco.getCatIds()
         self.cat2label = {cat_id: i for i, cat_id in enumerate(self.cat_ids)}
@@ -273,6 +279,8 @@ class CrowdPoseDataset(CocoPoseDataset):
                 .79, .79
             ]) / 10.0
 
+            if COCOeval is None:
+                raise RuntimeError('xtcocotools is not installed')
             cocoEval = COCOeval(
                 cocoGt,
                 cocoDt,
