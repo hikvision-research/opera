@@ -1094,8 +1094,8 @@ def _neg_loss(pred, gt):
     Runs faster and costs a little bit more memory.
 
     Args:
-      pred (Tensor): [bs, c, h, w].
-      gt_regr (Tensor): [bs, c, h, w].
+        pred (Tensor): [bs, c, h, w].
+        gt_regr (Tensor): [bs, c, h, w].
     """
     pos_inds = gt.eq(1).float()
     neg_inds = gt.lt(1).float()
