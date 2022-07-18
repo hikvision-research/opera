@@ -33,7 +33,7 @@ class KptL1Cost(object):
                 Shape [num_gt, K].
 
         Returns:
-            torch.Tensor: bbox_cost value with weight.
+            torch.Tensor: kpt_cost value with weight.
         """
         kpt_cost = []
         for i in range(len(gt_keypoints)):
@@ -104,7 +104,7 @@ class OksCost(object):
             gt_areas (Tensor): Ground truth mask areas. Shape [num_gt,].
 
         Returns:
-            torch.Tensor: bbox_cost value with weight.
+            torch.Tensor: oks_cost value with weight.
         """
         sigmas = torch.from_numpy(self.sigmas).to(kpt_pred.device)
         variances = (sigmas * 2)**2

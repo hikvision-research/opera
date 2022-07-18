@@ -73,11 +73,11 @@ class PoseHungarianAssigner(BaseAssigner):
             kpt_pred (Tensor): Predicted keypoints with normalized coordinates
                 (x_{i}, y_{i}), which are all in range [0, 1]. Shape
                 [num_query, K*2].
-            gt_labels (Tensor): Label of `gt_bboxes`, shape (num_gt,).
+            gt_labels (Tensor): Label of `gt_keypoints`, shape (num_gt,).
             gt_keypoints (Tensor): Ground truth keypoints with unnormalized
                 coordinates [p^{1}_x, p^{1}_y, p^{1}_v, ..., \
                     p^{K}_x, p^{K}_y, p^{K}_v]. Shape [num_gt, K*3].
-            gt_areas (Tensor): Label of `gt_areas`, shape (num_gt,).
+            gt_areas (Tensor): Ground truth mask areas, shape (num_gt,).
             img_meta (dict): Meta information for current image.
             eps (int | float, optional): A value added to the denominator for
                 numerical stability. Default 1e-7.
@@ -85,17 +85,17 @@ class PoseHungarianAssigner(BaseAssigner):
         Returns:
             :obj:`AssignResult`: The assigned result.
         """
-        num_gts, num_bboxes = gt_keypoints.size(0), kpt_pred.size(0)
+        num_gts, num_kpts = gt_keypoints.size(0), kpt_pred.size(0)
 
         # 1. assign -1 by default
-        assigned_gt_inds = kpt_pred.new_full((num_bboxes, ),
+        assigned_gt_inds = kpt_pred.new_full((num_kpts, ),
                                              -1,
                                              dtype=torch.long)
-        assigned_labels = kpt_pred.new_full((num_bboxes, ),
+        assigned_labels = kpt_pred.new_full((num_kpts, ),
                                             -1,
                                             dtype=torch.long)
-        if num_gts == 0 or num_bboxes == 0:
-            # No ground truth or boxes, return empty assignment
+        if num_gts == 0 or num_kpts == 0:
+            # No ground truth or keypoints, return empty assignment
             if num_gts == 0:
                 # No ground truth, assign all to background
                 assigned_gt_inds[:] = 0
@@ -106,7 +106,7 @@ class PoseHungarianAssigner(BaseAssigner):
                                           img_h]).unsqueeze(0)
 
         # 2. compute the weighted costs
-        # classification and bboxcost.
+        # classification cost
         cls_cost = self.cls_cost(cls_pred, gt_labels)
 
         # keypoint regression L1 cost
@@ -125,7 +125,7 @@ class PoseHungarianAssigner(BaseAssigner):
         kpt_pred_tmp = kpt_pred_tmp * factor[:, :2].unsqueeze(0)
         oks_cost = self.oks_cost(kpt_pred_tmp, gt_keypoints_reshape[..., :2],
                                  valid_kpt_flag, gt_areas)
-        # weighted sum of above four costs
+        # weighted sum of above three costs
         cost = cls_cost + kpt_cost + oks_cost
 
         # 3. do Hungarian matching on CPU using linear_sum_assignment
