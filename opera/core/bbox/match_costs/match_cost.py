@@ -94,10 +94,10 @@ class OksCost(object):
     def __call__(self, kpt_pred, gt_keypoints, valid_kpt_flag, gt_areas):
         """
         Args:
-            kpt_pred (Tensor): Predicted keypoints with normalized coordinates
-                (x_{i}, y_{i}), which are all in range [0, 1]. Shape
-                [num_query, K, 2].
-            gt_keypoints (Tensor): Ground truth keypoints with normalized
+            kpt_pred (Tensor): Predicted keypoints with unnormalized
+                coordinates (x_{i}, y_{i}), which are all in range [0, 1].
+                Shape [num_query, K, 2].
+            gt_keypoints (Tensor): Ground truth keypoints with unnormalized
                 coordinates (x_{i}, y_{i}). Shape [num_gt, K, 2].
             valid_kpt_flag (Tensor): valid flag of ground truth keypoints.
                 Shape [num_gt, K].
