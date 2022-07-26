@@ -8,7 +8,7 @@ def distance2keypoint(points, offset, max_shape=None):
 
     Args:
         points (Tensor): Shape (N, 2).
-        offset (Tensor): Offset from the given point to K keypoints (N, 2K).
+        offset (Tensor): Offset from the given point to K keypoints (N, K*2).
         max_shape (tuple): Shape of the image.
 
     Returns:
@@ -135,7 +135,7 @@ def weighted_neg_loss(pred, gt, weight):
 
     Args:
         pred (Tensor): [bs, c, h, w]
-        gt_regr (Tensor): [bs, c, h, w]
+        gt (Tensor): [bs, c, h, w]
     """
     pos_inds = gt.eq(1).float()
     neg_inds = gt.lt(1).float() * weight.lt(1).float()
@@ -169,7 +169,7 @@ def bbox_kpt2result(bboxes, labels, kpts, num_classes):
         num_classes (int): class number, including background class.
 
     Returns:
-        list(ndarray): bbox results of each class.
+        list(ndarray): bbox and keypoint results of each class.
     """
     if bboxes.shape[0] == 0:
         return [np.zeros((0, 5), dtype=np.float32) for i in range(num_classes)], \
@@ -188,14 +188,14 @@ def kpt_flip(kpts, img_shape, flip_pairs, direction):
     """Flip keypoints horizontally or vertically.
 
     Args:
-        kpts (Tensor): Shape (..., 2).
+        kpts (Tensor): Shape (n, K, 2).
         img_shape (tuple): Image shape.
         flip_pairs (list): Flip pair index.
         direction (str): Flip direction, only "horizontal" is supported now.
             Default: "horizontal".
 
     Returns:
-        Tensor: Flipped bboxes.
+        Tensor: Flipped keypoints.
     """
     assert kpts.shape[-1] % 2 == 0
     assert direction == 'horizontal'

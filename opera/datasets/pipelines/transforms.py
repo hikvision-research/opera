@@ -14,7 +14,7 @@ from ..builder import PIPELINES
 
 @PIPELINES.register_module()
 class Resize(MMDetResize):
-    """Resize images & bbox & mask & keypoint.
+    """Resize images & bbox & mask & keypoint & mask area.
 
     Args:
         keypoint_clip_border (bool, optional): Whether to clip the objects
@@ -29,7 +29,7 @@ class Resize(MMDetResize):
         self.keypoint_clip_border = keypoint_clip_border
 
     def _resize_keypoints(self, results):
-        """Resize bounding boxes with ``results['scale_factor']``."""
+        """Resize keypoints with ``results['scale_factor']``."""
         for key in results.get('keypoint_fields', []):
             keypoints = results[key].copy()
             keypoints[:,
@@ -54,7 +54,7 @@ class Resize(MMDetResize):
 
     def __call__(self, results):
         """Call function to resize images, bounding boxes, masks, semantic
-        segmentation map.
+        segmentation map, keypoints, mask areas.
 
         Args:
             results (dict): Result dict from loading pipeline.
@@ -92,9 +92,10 @@ class RandomFlip(MMDetRandomFlip):
             img_shape (tuple[int]): Image shape (height, width).
             direction (str): Flip direction. Options are 'horizontal',
                 'vertical'.
+            flip_pairs (list): Flip pair indices.
 
         Returns:
-            numpy.ndarray: Flipped bounding boxes.
+            numpy.ndarray: Flipped keypoints.
         """
 
         assert keypoints.shape[-1] % 3 == 0
@@ -119,7 +120,7 @@ class RandomFlip(MMDetRandomFlip):
 
     def __call__(self, results):
         """Call function to flip bounding boxes, masks, semantic segmentation
-        maps.
+        maps, keypoints.
 
         Args:
             results (dict): Result dict from loading pipeline.
@@ -142,7 +143,7 @@ class RandomFlip(MMDetRandomFlip):
 
 @PIPELINES.register_module()
 class RandomCrop(MMDetRandomCrop):
-    """Random crop the image & bboxes & masks & keypoint.
+    """Random crop the image & bboxes & masks & keypoints & mask areas.
 
     The absolute `crop_size` is sampled based on `crop_type` and `image_size`,
     then the cropped results are generated.
@@ -176,7 +177,7 @@ class RandomCrop(MMDetRandomCrop):
 
     def _crop_data(self, results, crop_size, allow_negative_crop):
         """Function to randomly crop images, bounding boxes, masks, semantic
-        segmentation maps, keypoints.
+        segmentation maps, keypoints, mask areas.
 
         Args:
             results (dict): Result dict from loading pipeline.
@@ -240,7 +241,7 @@ class RandomCrop(MMDetRandomCrop):
             if kpt_key in results:
                 results[kpt_key] = results[kpt_key][valid_inds]
             
-            # area fields, e.g. gt_areas
+            # mask area fields, e.g. gt_areas
             area_key = self.bbox2area.get(key)
             if area_key in results:
                 results[area_key] = results[area_key][valid_inds]

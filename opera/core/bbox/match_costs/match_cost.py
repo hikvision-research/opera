@@ -95,8 +95,7 @@ class OksCost(object):
         """
         Args:
             kpt_pred (Tensor): Predicted keypoints with unnormalized
-                coordinates (x_{i}, y_{i}), which are all in range [0, 1].
-                Shape [num_query, K, 2].
+                coordinates (x_{i}, y_{i}). Shape [num_query, K, 2].
             gt_keypoints (Tensor): Ground truth keypoints with unnormalized
                 coordinates (x_{i}, y_{i}). Shape [num_gt, K, 2].
             valid_kpt_flag (Tensor): valid flag of ground truth keypoints.

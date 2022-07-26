@@ -69,7 +69,7 @@ class CocoPoseDataset(CocoDataset):
         results['area_fields'] = []
 
     def _parse_ann_info(self, img_info, ann_info):
-        """Parse bbox and mask annotation.
+        """Parse bbox, mask and keypoint annotation.
 
         Args:
             ann_info (list[dict]): Annotation info of an image.
@@ -77,8 +77,8 @@ class CocoPoseDataset(CocoDataset):
 
         Returns:
             dict: A dict containing the following keys: bboxes, bboxes_ignore,\
-                labels, masks, seg_map. "masks" are raw annotations and not \
-                decoded into binary masks.
+                labels, masks, seg_map, keypoints, areas. "masks" are raw \
+                annotations and not decoded into binary masks.
         """
         gt_bboxes = []
         gt_labels = []
@@ -177,9 +177,10 @@ class CocoPoseDataset(CocoDataset):
     def results2json(self, results, outfile_prefix):
         """Dump the detection results to a COCO style json file.
 
-        There are 3 types of results: proposals, bbox predictions, mask
-        predictions, and they have different data types. This method will
-        automatically recognize the type, and dump them to json files.
+        There are 4 types of results: proposals, bbox predictions, mask
+        predictions, keypoint_predictions, and they have different data types.
+        This method will automatically recognize the type, and dump them to
+        json files.
 
         Args:
             results (list[list | tuple | ndarray]): Testing results of the

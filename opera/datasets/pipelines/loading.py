@@ -13,9 +13,9 @@ class LoadAnnotations(MMDetLoadAnnotations):
 
     Args:
         with_keypoint (bool): Whether to parse and load the keypoint annotation.
-             Default: False.
+            Default: False.
         with_area (bool): Whether to parse and load the mask area annotation.
-             Default: False.
+            Default: False.
     """
 
     def __init__(self,
@@ -43,13 +43,13 @@ class LoadAnnotations(MMDetLoadAnnotations):
         return results
 
     def _load_areas(self, results):
-        """Private function to load mask areas.
+        """Private function to load mask area annotations.
 
         Args:
             results (dict): Result dict from :obj:`mmdet.CustomDataset`.
 
         Returns:
-            dict: The dict contains loaded mask areas.
+            dict: The dict contains loaded mask area annotations.
         """
 
         ann_info = results['ann_info']
@@ -64,8 +64,8 @@ class LoadAnnotations(MMDetLoadAnnotations):
             results (dict): Result dict from :obj:`mmdet.CustomDataset`.
 
         Returns:
-            dict: The dict contains loaded bounding box, label, mask and
-                semantic segmentation annotations.
+            dict: The dict contains loaded bounding box, label, mask,
+                semantic segmentation, keypoint and mask area annotations.
         """
 
         results = super(LoadAnnotations, self).__call__(results)

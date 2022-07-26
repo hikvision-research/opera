@@ -33,7 +33,7 @@ class PoseHungarianAssigner(BaseAssigner):
         kpt_weight (int | float, optional): The scale factor for regression
             L1 cost. Default 1.0.
         oks_weight (int | float, optional): The scale factor for regression
-            iou cost. Default 1.0.
+            oks cost. Default 1.0.
     """
 
     def __init__(self,

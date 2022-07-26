@@ -128,7 +128,7 @@ class CrowdPoseDataset(CocoPoseDataset):
         return valid_inds
 
     def _parse_ann_info(self, img_info, ann_info):
-        """Parse bbox and mask annotation.
+        """Parse bbox, mask and keypoint annotation.
 
         Args:
             ann_info (list[dict]): Annotation info of an image.
@@ -136,8 +136,8 @@ class CrowdPoseDataset(CocoPoseDataset):
 
         Returns:
             dict: A dict containing the following keys: bboxes, bboxes_ignore,
-                labels, masks, seg_map. "masks" are raw annotations and not
-                decoded into binary masks.
+                labels, masks, seg_map, keypoints, areas. "masks" are raw
+                annotations and not decoded into binary masks.
         """
         gt_bboxes = []
         gt_labels = []
