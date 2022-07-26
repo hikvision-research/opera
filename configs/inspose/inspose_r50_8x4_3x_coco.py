@@ -61,12 +61,12 @@ model = dict(
             loss_weight=1.0),
         loss_weight_offset=1.0,
         unvisible_weight=0.1),
-        test_cfg = dict(
-            nms_pre=1000,
-            score_thr=0.05,
-            nms=dict(type='soft_nms', iou_threshold=0.3),
-            mask_thresh=0.5,
-            max_per_img=100))
+    test_cfg = dict(
+        nms_pre=1000,
+        score_thr=0.05,
+        nms=dict(type='soft_nms', iou_threshold=0.3),
+        mask_thresh=0.5,
+        max_per_img=100))
 # dataset settings
 dataset_type = 'opera.CocoPoseDataset'
 data_root = '/dataset/public/coco/'
