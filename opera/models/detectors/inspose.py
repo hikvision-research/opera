@@ -67,9 +67,9 @@ class InsPose(SingleStageDetector):
                 Defaults to False.
 
         Returns:
-            list[list[np.ndarray]]: BBox results of each image and classes.
-                The outer list corresponds to each image. The inner list
-                corresponds to each class.
+            list[list[np.ndarray]]: BBox and keypoint results of each image
+                and classes. The outer list corresponds to each image.
+                The inner list corresponds to each class.
         """
         batch_size = len(img_metas)
         assert batch_size == 1, 'Currently only batch_size 1 for inference ' \
@@ -77,11 +77,11 @@ class InsPose(SingleStageDetector):
         
         feat = self.extract_feat(img)
         outs = self.bbox_head(feat)
-        bbox_inputs = outs + (img, img_metas, self.test_cfg, rescale)
-        bbox_list = self.bbox_head.get_bboxes(*bbox_inputs)
-        bbox_results = [
-            bbox_kpt2result(
-                det_bboxes, det_labels, det_keypoints, self.bbox_head.num_classes)
-            for det_bboxes, det_labels, det_keypoints in bbox_list
+        results_list = self.bbox_head.get_bboxes(
+            *outs, img, img_metas, self.test_cfg, rescale)
+        bbox_kpt_results = [
+            bbox_kpt2result(det_bboxes, det_labels, det_kpts,
+                            self.bbox_head.num_classes)
+            for det_bboxes, det_labels, det_kpts in results_list
         ]
-        return bbox_results
+        return bbox_kpt_results

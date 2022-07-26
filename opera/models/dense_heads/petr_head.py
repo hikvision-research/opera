@@ -1047,11 +1047,13 @@ class PETRHead(AnchorFreeHead):
                 Defaults to False.
 
         Returns:
-            list[tuple[Tensor, Tensor]]: Each item in result_list is 2-tuple.
-                The first item is ``bboxes`` with shape (n, 5),
+            list[tuple[Tensor, Tensor, Tensor]]: Each item in result_list is
+                3-tuple. The first item is ``bboxes`` with shape (n, 5),
                 where 5 represent (tl_x, tl_y, br_x, br_y, score).
                 The shape of the second tensor in the tuple is ``labels``
-                with shape (n,).
+                with shape (n,). The third item is ``kpts`` with shape
+                (n, K, 3), in [p^{1}_x, p^{1}_y, p^{1}_v, p^{K}_x, p^{K}_y,
+                p^{K}_v] format.
         """
         # forward of this head requires img_metas
         outs = self.forward(feats, img_metas)

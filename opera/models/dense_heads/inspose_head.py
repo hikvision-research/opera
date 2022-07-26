@@ -640,7 +640,6 @@ class InsPoseHead(AnchorFreeHead):
                 -1, 2 * self.num_keypoints)
             coord_normalize = point.new_ones(point.size(0), 1) * stride * 8
             nms_pre = cfg.get('nms_pre', -1)
-            score_thr = 0.15
             if nms_pre > 0 and scores.shape[0] > nms_pre:
                 max_scores, _ = scores.max(dim=1)
                 topk_scores, topk_inds = max_scores.topk(nms_pre)
