@@ -877,7 +877,7 @@ class PETRHead(AnchorFreeHead):
         loss_cls = self.loss_cls(
             cls_scores, labels, label_weights, avg_factor=cls_avg_factor)
 
-        # Compute the average number of gt boxes accross all gpus, for
+        # Compute the average number of gt keypoints accross all gpus, for
         # normalization purposes
         # num_total_pos = loss_cls.new_tensor([num_total_pos])
         # num_total_pos = torch.clamp(reduce_mean(num_total_pos), min=1).item()
@@ -924,12 +924,14 @@ class PETRHead(AnchorFreeHead):
                 image space. Defalut False.
 
         Returns:
-            list[list[Tensor, Tensor]]: Each item in result_list is 2-tuple.
+            list[list[Tensor, Tensor]]: Each item in result_list is 3-tuple.
                 The first item is an (n, 5) tensor, where the first 4 columns
                 are bounding box positions (tl_x, tl_y, br_x, br_y) and the
                 5-th column is a score between 0 and 1. The second item is a
                 (n,) tensor where each item is the predicted class label of
-                the corresponding box.
+                the corresponding box. The third item is an (n, K, 3) tensor
+                with [p^{1}_x, p^{1}_y, p^{1}_v, ..., p^{K}_x, p^{K}_y,
+                p^{K}_v] format.
         """
         cls_scores = all_cls_scores[-1]
         kpt_preds = all_kpt_preds[-1]

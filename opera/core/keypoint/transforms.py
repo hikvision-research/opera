@@ -165,7 +165,7 @@ def bbox_kpt2result(bboxes, labels, kpts, num_classes):
     Args:
         bboxes (torch.Tensor | np.ndarray): shape (n, 5).
         labels (torch.Tensor | np.ndarray): shape (n, ).
-        kpts (torch.Tensor | np.ndarray): shape (n, K*3).
+        kpts (torch.Tensor | np.ndarray): shape (n, K, 3).
         num_classes (int): class number, including background class.
 
     Returns:

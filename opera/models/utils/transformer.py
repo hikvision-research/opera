@@ -254,11 +254,11 @@ class MultiScaleDeformablePoseAttention(BaseModule):
     Args:
         embed_dims (int): The embedding dimension of Attention.
             Default: 256.
-        num_heads (int): Parallel attention heads. Default: 64.
+        num_heads (int): Parallel attention heads. Default: 8.
         num_levels (int): The number of feature map used in
             Attention. Default: 4.
         num_points (int): The number of sampling points for
-            each query in each head. Default: 4.
+            each query in each head. Default: 17.
         im2col_step (int): The step used in image_to_column.
             Default: 64.
         dropout (float): A Dropout layer on `inp_residual`.

@@ -91,9 +91,9 @@ class PETR(DETR):
                 Defaults to False.
 
         Returns:
-            list[list[np.ndarray]]: BBox results of each image and classes.
-                The outer list corresponds to each image. The inner list
-                corresponds to each class.
+            list[list[np.ndarray]]: BBox and keypoint results of each image
+                and classes. The outer list corresponds to each image.
+                The inner list corresponds to each class.
         """
         batch_size = len(img_metas)
         assert batch_size == 1, 'Currently only batch_size 1 for inference ' \
@@ -103,12 +103,12 @@ class PETR(DETR):
         results_list = self.bbox_head.simple_test(
             feat, img_metas, rescale=rescale)
 
-        bbox_results = [
+        bbox_kpt_results = [
             bbox_kpt2result(det_bboxes, det_labels, det_kpts,
                             self.bbox_head.num_classes)
             for det_bboxes, det_labels, det_kpts in results_list
         ]
-        return bbox_results
+        return bbox_kpt_results
 
     def merge_aug_results(self, aug_bboxes, aug_kpts, aug_scores, img_metas):
         """Merge augmented detection bboxes and keypoints.
@@ -175,11 +175,11 @@ class PETR(DETR):
         det_kpts = torch.cat(
             (det_kpts, det_kpts.new_ones(det_kpts[..., :1].shape)), dim=2)
 
-        bbox_results = [
+        bbox_kpt_results = [
             bbox_kpt2result(det_bboxes, det_labels, det_kpts,
                             self.bbox_head.num_classes)
         ]
-        return bbox_results
+        return bbox_kpt_results
 
     def show_result(self,
                     img,
@@ -297,7 +297,7 @@ class PETR(DETR):
                 (n, 5).
             labels (ndarray): Labels of bboxes.
             segms (ndarray or None): Masks, shaped (n,h,w) or None.
-            bboxes (ndarray): keypoints (with scores), shaped (n, K, 3).
+            keypoints (ndarray): keypoints (with scores), shaped (n, K, 3).
             class_names (list[str]): Names of each classes.
             score_thr (float): Minimum score of bboxes to be shown. Default: 0.
             bbox_color (str or tuple(int) or :obj:`Color`):Color of bbox lines.
