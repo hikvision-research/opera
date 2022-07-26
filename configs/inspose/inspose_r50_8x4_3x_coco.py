@@ -53,12 +53,7 @@ model = dict(
         loss_bbox=dict(type='mmdet.GIoULoss', loss_weight=1.0),
         loss_centerness=dict(
             type='mmdet.CrossEntropyLoss', use_sigmoid=True, loss_weight=1.0),
-        loss_hm=dict(
-            type='mmdet.FocalLoss',
-            use_sigmoid=True,
-            gamma=2.0,
-            alpha=0.25,
-            loss_weight=1.0),
+        loss_hm=dict(type='opera.CenterFocalLoss', loss_weight=1.0),
         loss_weight_offset=1.0,
         unvisible_weight=0.1),
     test_cfg = dict(

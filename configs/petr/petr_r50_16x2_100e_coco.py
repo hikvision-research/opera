@@ -109,7 +109,7 @@ model = dict(
         loss_kpt=dict(type='mmdet.L1Loss', loss_weight=70.0),
         loss_kpt_rpn=dict(type='mmdet.L1Loss', loss_weight=70.0),
         loss_oks=dict(type='opera.OKSLoss', loss_weight=2.0),
-        loss_hm=dict(type='mmdet.NegLoss', loss_weight=4.0),
+        loss_hm=dict(type='opera.CenterFocalLoss', loss_weight=4.0),
         loss_kpt_refine=dict(type='mmdet.L1Loss', loss_weight=80.0),
         loss_oks_refine=dict(type='opera.OKSLoss', loss_weight=3.0)),
     train_cfg=dict(

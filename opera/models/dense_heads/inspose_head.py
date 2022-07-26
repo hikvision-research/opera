@@ -77,12 +77,7 @@ class InsPoseHead(AnchorFreeHead):
                      iou_weighted=True,
                      loss_weight=1.0),
                  loss_bbox=dict(type='IoULoss', loss_weight=1.0),
-                 loss_hm=dict(
-                     type='FocalLoss',
-                     use_sigmoid=True,
-                     gamma=2.0,
-                     alpha=0.25,
-                     loss_weight=1.0),
+                 loss_hm=dict(type='CenterFocalLoss', loss_weight=1.0),
                  loss_weight_offset=1.0,
                  unvisible_weight=0.1,
                  conv_cfg=None,
@@ -112,6 +107,7 @@ class InsPoseHead(AnchorFreeHead):
         self.regress_ranges = regress_ranges
         self.loss_cls = build_loss(loss_cls)
         self.loss_bbox = build_loss(loss_bbox)
+        self.loss_hm = build_loss(loss_hm)
         self.conv_cfg = conv_cfg
         self.norm_cfg = norm_cfg
         self.train_cfg = train_cfg
@@ -1013,7 +1009,7 @@ class InsPoseHead(AnchorFreeHead):
         # compute heatmap loss
         # refer to CenterNet
         hm_pred = torch.clamp(hm_pred.sigmoid_(), min=1e-4, max=1 - 1e-4)
-        loss_hm = _neg_loss(hm_pred, hm_target)
+        loss_hm = self.loss_hm(hm_pred, hm_target)
         # compute offset loss
         hm_offset_target[hm_offset_target == INF] = 0
         loss_hm_offset = F.l1_loss(
@@ -1086,33 +1082,3 @@ class InsPoseHead(AnchorFreeHead):
         x = relu(x)
         x = F.conv2d(x, conv3_weight, conv3_bias)
         return x
-
-
-def _neg_loss(pred, gt):
-    """Modified focal loss. Exactly the same as CornerNet.
-    Runs faster and costs a little bit more memory.
-
-    Args:
-        pred (Tensor): [bs, c, h, w].
-        gt (Tensor): [bs, c, h, w].
-    """
-    pos_inds = gt.eq(1).float()
-    neg_inds = gt.lt(1).float()
-
-    neg_weights = torch.pow(1 - gt, 4)
-
-    loss = 0
-
-    pos_loss = torch.log(pred) * torch.pow(1 - pred, 2) * pos_inds
-    neg_loss = torch.log(1 - pred) * torch.pow(pred, 2) * neg_weights * \
-        neg_inds
-
-    num_pos = pos_inds.float().sum()
-    pos_loss = pos_loss.sum()
-    neg_loss = neg_loss.sum()
-
-    if num_pos == 0:
-        loss = loss - neg_loss
-    else:
-        loss = loss - (pos_loss + neg_loss) / num_pos
-    return loss

@@ -12,8 +12,7 @@ from mmdet.models.utils.transformer import inverse_sigmoid
 from mmdet.models.dense_heads import AnchorFreeHead
 
 from opera.core.bbox import build_assigner, build_sampler
-from opera.core.keypoint import (gaussian_radius, draw_umich_gaussian,
-                                 weighted_neg_loss)
+from opera.core.keypoint import gaussian_radius, draw_umich_gaussian
 from opera.models.utils import build_positional_encoding, build_transformer
 from ..builder import HEADS, build_loss
 
@@ -75,7 +74,7 @@ class PETRHead(AnchorFreeHead):
                      loss_weight=2.0),
                  loss_kpt=dict(type='L1Loss', loss_weight=70.0),
                  loss_oks=dict(type='OKSLoss', loss_weight=2.0),
-                 loss_hm=dict(type='NegLoss', loss_weight=4.0),
+                 loss_hm=dict(type='CenterFocalLoss', loss_weight=4.0),
                  as_two_stage=True,
                  with_kpt_refine=True,
                  train_cfg=dict(
@@ -128,7 +127,7 @@ class PETRHead(AnchorFreeHead):
         self.loss_kpt_refine = build_loss(loss_kpt_refine)
         self.loss_oks = build_loss(loss_oks)
         self.loss_oks_refine = build_loss(loss_oks_refine)
-        self.loss_hm_weight = loss_hm['loss_weight']
+        self.loss_hm = build_loss(loss_hm)
         if self.loss_cls.use_sigmoid:
             self.cls_out_channels = num_classes
         else:
@@ -579,8 +578,8 @@ class PETRHead(AnchorFreeHead):
         # compute heatmap loss
         hm_pred = torch.clamp(
             hm_pred.sigmoid_(), min=1e-4, max=1 - 1e-4)  # refer to CenterNet
-        loss_hm = weighted_neg_loss(hm_pred, hm_target, hm_mask.unsqueeze(1))
-        return loss_hm * self.loss_hm_weight
+        loss_hm = self.loss_hm(hm_pred, hm_target, mask=~hm_mask.unsqueeze(1))
+        return loss_hm
 
     def loss_single(self,
                     cls_scores,

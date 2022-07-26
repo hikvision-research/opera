@@ -129,36 +129,6 @@ def draw_short_range_offset(offset_map, mask_map, gt_kp, radius):
     return offset_map, mask_map
 
 
-def weighted_neg_loss(pred, gt, weight):
-    """Modified focal loss. Exactly the same as CornerNet.
-    Runs faster and costs a little bit more memory.
-
-    Args:
-        pred (Tensor): [bs, c, h, w]
-        gt (Tensor): [bs, c, h, w]
-    """
-    pos_inds = gt.eq(1).float()
-    neg_inds = gt.lt(1).float() * weight.lt(1).float()
-
-    neg_weights = torch.pow(1 - gt, 4)
-
-    loss = 0
-
-    pos_loss = torch.log(pred) * torch.pow(1 - pred, 2) * pos_inds
-    neg_loss = torch.log(1 - pred) * torch.pow(pred, 2) * neg_weights * \
-        neg_inds
-
-    num_pos = pos_inds.float().sum()
-    pos_loss = pos_loss.sum()
-    neg_loss = neg_loss.sum()
-
-    if num_pos == 0:
-        loss = loss - neg_loss
-    else:
-        loss = loss - (pos_loss + neg_loss) / num_pos
-    return loss
-
-
 def bbox_kpt2result(bboxes, labels, kpts, num_classes):
     """Convert detection results to a list of numpy arrays.
 
