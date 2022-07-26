@@ -262,7 +262,7 @@ class MultiScaleDeformablePoseAttention(BaseModule):
         im2col_step (int): The step used in image_to_column.
             Default: 64.
         dropout (float): A Dropout layer on `inp_residual`.
-            Default: 0..
+            Default: 0.1.
         init_cfg (obj:`mmcv.ConfigDict`): The Config for initialization.
             Default: None.
     """

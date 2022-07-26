@@ -39,7 +39,7 @@ class InsPose(SingleStageDetector):
                 :class:`mmdet.datasets.pipelines.Collect`.
             gt_bboxes (list[Tensor]): Each item are the truth boxes for each
                 image in [tl_x, tl_y, br_x, br_y] format.
-            gt_labels (list[Tensor]): Class indices corresponding to each box
+            gt_labels (list[Tensor]): Class indices corresponding to each box.
             gt_keypoints (list[Tensor]): Each item are the truth keypoints for
                 each image in [p^{1}_x, p^{1}_y, p^{1}_v, ..., p^{K}_x,
                 p^{K}_y, p^{K}_v] format.
@@ -61,7 +61,7 @@ class InsPose(SingleStageDetector):
         """Test function without test time augmentation.
 
         Args:
-            imgs (list[torch.Tensor]): List of multiple images.
+            img (list[torch.Tensor]): List of multiple images.
             img_metas (list[dict]): List of image information.
             rescale (bool, optional): Whether to rescale the results.
                 Defaults to False.

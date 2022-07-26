@@ -605,11 +605,11 @@ class InsPoseHead(AnchorFreeHead):
             scale_factor = img_metas[img_id]['scale_factor']
             shared_feat = shared_feats[img_id]
             det_bboxes = self._get_bboxes_single(cls_score_list,
-                                                controller_pred_list,
-                                                offset_pred_list, shared_feat,
-                                                mlvl_points, img, img_meta,
-                                                img_shape, scale_factor, cfg,
-                                                rescale)
+                                                 controller_pred_list,
+                                                 offset_pred_list, shared_feat,
+                                                 mlvl_points, img, img_meta,
+                                                 img_shape, scale_factor, cfg,
+                                                 rescale)
             result_list.append(det_bboxes)
         return result_list
 
@@ -1095,7 +1095,7 @@ def _neg_loss(pred, gt):
 
     Args:
         pred (Tensor): [bs, c, h, w].
-        gt_regr (Tensor): [bs, c, h, w].
+        gt (Tensor): [bs, c, h, w].
     """
     pos_inds = gt.eq(1).float()
     neg_inds = gt.lt(1).float()

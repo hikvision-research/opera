@@ -176,7 +176,7 @@ class SOITHead(DETRHead):
         Returns:
             all_cls_scores (Tensor): Outputs from the classification head, \
                 shape [nb_dec, bs, num_query, cls_out_channels]. Note \
-                cls_out_channels should includes background.
+                cls_out_channels should include background.
             all_bbox_preds (Tensor): Sigmoid outputs from the regression \
                 head with normalized coordinate format (cx, cy, w, h). \
                 Shape [nb_dec, bs, num_query, 4].
@@ -279,7 +279,7 @@ class SOITHead(DETRHead):
              gt_masks_list,
              img_metas,
              gt_bboxes_ignore=None):
-        """"Loss function.
+        """Loss function.
 
         Args:
             all_cls_scores (Tensor): Classification score of all decoder
@@ -471,7 +471,7 @@ class SOITHead(DETRHead):
                          gt_labels_list,
                          img_metas,
                          gt_bboxes_ignore_list=None):
-        """"Compute segmentation targets for a batch image.
+        """Compute segmentation targets for a batch image.
 
         Outputs from a single decoder layer of a single feature level are used.
 
@@ -528,7 +528,7 @@ class SOITHead(DETRHead):
                                 gt_labels,
                                 img_meta,
                                 gt_bboxes_ignore=None):
-        """"Compute segmentation targets for one image.
+        """Compute segmentation targets for one image.
 
         Outputs from a single decoder layer of a single feature level are used.
 
@@ -550,7 +550,7 @@ class SOITHead(DETRHead):
             tuple[Tensor]: a tuple containing the following for one image.
 
                 - labels (Tensor): Labels of each image.
-                - label_weights (Tensor]): Label weights of each image.
+                - label_weights (Tensor): Label weights of each image.
                 - bbox_targets (Tensor): BBox targets of each image.
                 - bbox_weights (Tensor): BBox weights of each image.
                 - pos_inds (Tensor): Sampled positive indices for each image.
@@ -766,7 +766,7 @@ class SOITHead(DETRHead):
 
 
 class DynamicDeformableAttention(BaseModule):
-    """An dynamic attention module used in SOIT. The parameters of this module
+    """A dynamic attention module used in SOIT. The parameters of this module
     are generated from transformer decoder head.
 
     Args:
@@ -780,7 +780,7 @@ class DynamicDeformableAttention(BaseModule):
         im2col_step (int): The step used in image_to_column.
             Default: 64.
         dropout (float): A Dropout layer on `inp_residual`.
-            Default: 0..
+            Default: 0.1.
         init_cfg (obj:`mmcv.ConfigDict`): The Config for initialization.
             Default: None.
     """
@@ -819,7 +819,7 @@ class DynamicDeformableAttention(BaseModule):
                 'which is more efficient in our CUDA implementation.')
 
         self.im2col_step = im2col_step
-        self.im2col_step_test = 100 # for test
+        self.im2col_step_test = 100  # for test
         self.embed_dims = embed_dims
         self.num_levels = num_levels
         self.num_heads = num_heads

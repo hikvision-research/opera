@@ -221,7 +221,7 @@ class PETRHead(AnchorFreeHead):
         Returns:
             outputs_classes (Tensor): Outputs from the classification head,
                 shape [nb_dec, bs, num_query, cls_out_channels]. Note
-                cls_out_channels should includes background.
+                cls_out_channels should include background.
             outputs_kpts (Tensor): Sigmoid outputs from the regression
                 head with normalized coordinate format (cx, cy, w, h).
                 Shape [nb_dec, bs, num_query, K*2].
@@ -459,7 +459,7 @@ class PETRHead(AnchorFreeHead):
              gt_areas_list,
              img_metas,
              gt_bboxes_ignore=None):
-        """"Loss function.
+        """Loss function.
 
         Args:
             all_cls_scores (Tensor): Classification score of all
@@ -569,8 +569,7 @@ class PETRHead(AnchorFreeHead):
                 kp_radius = torch.clamp(
                     torch.floor(
                         gaussian_radius((gt_h[j], gt_w[j]), min_overlap=0.9)),
-                        min=0,
-                        max=3)
+                    min=0, max=3)
                 for k in range(self.num_keypoints):
                     if gt_keypoint[j, k, 2] > 0:
                         gt_kp = gt_keypoint[j, k, :2]
@@ -590,7 +589,7 @@ class PETRHead(AnchorFreeHead):
                     gt_keypoints_list,
                     gt_areas_list,
                     img_metas):
-        """"Loss function for outputs from a single decoder layer of a single
+        """Loss function for outputs from a single decoder layer of a single
         feature level.
 
         Args:
@@ -639,12 +638,12 @@ class PETRHead(AnchorFreeHead):
         loss_cls = self.loss_cls(
             cls_scores, labels, label_weights, avg_factor=cls_avg_factor)
 
-        # Compute the average number of gt boxes accross all gpus, for
+        # Compute the average number of gt keypoints accross all gpus, for
         # normalization purposes
         num_total_pos = loss_cls.new_tensor([num_total_pos])
         num_total_pos = torch.clamp(reduce_mean(num_total_pos), min=1).item()
 
-        # construct factors used for rescale bboxes
+        # construct factors used for rescale keypoints
         factors = []
         for img_meta, kpt_pred in zip(img_metas, kpt_preds):
             img_h, img_w, _ = img_meta['img_shape']
@@ -690,7 +689,7 @@ class PETRHead(AnchorFreeHead):
                     gt_keypoints_list,
                     gt_areas_list,
                     img_metas):
-        """"Compute regression and classification targets for a batch image.
+        """Compute regression and classification targets for a batch image.
 
         Outputs from a single decoder layer of a single feature level are used.
 
@@ -743,7 +742,7 @@ class PETRHead(AnchorFreeHead):
                            gt_keypoints,
                            gt_areas,
                            img_meta):
-        """"Compute regression and classification targets for one image.
+        """Compute regression and classification targets for one image.
 
         Outputs from a single decoder layer of a single feature level are used.
 
@@ -766,7 +765,7 @@ class PETRHead(AnchorFreeHead):
             tuple[Tensor]: a tuple containing the following for one image.
 
                 - labels (Tensor): Labels of each image.
-                - label_weights (Tensor]): Label weights of each image.
+                - label_weights (Tensor): Label weights of each image.
                 - kpt_targets (Tensor): Keypoint targets of each image.
                 - kpt_weights (Tensor): Keypoint weights of each image.
                 - area_targets (Tensor): Area targets of each image.
@@ -829,7 +828,7 @@ class PETRHead(AnchorFreeHead):
                         gt_keypoints_list,
                         gt_areas_list,
                         img_metas):
-        """"Loss function for outputs from a single decoder layer of a single
+        """Loss function for outputs from a single decoder layer of a single
         feature level.
 
         Args:

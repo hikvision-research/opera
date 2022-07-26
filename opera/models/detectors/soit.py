@@ -32,7 +32,7 @@ class SOIT(DETR):
         """Test function without test time augmentation.
 
         Args:
-            imgs (list[torch.Tensor]): List of multiple images.
+            img (list[torch.Tensor]): List of multiple images.
             img_metas (list[dict]): List of image information.
             rescale (bool, optional): Whether to rescale the results.
                 Defaults to False.
