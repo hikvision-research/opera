@@ -675,7 +675,7 @@ class InsPoseHead(AnchorFreeHead):
         padding = mlvl_scores.new_ones(mlvl_keypoints.shape[0],
                                        mlvl_keypoints.shape[1], 1)
         mlvl_keypoints = torch.cat([mlvl_keypoints, padding], dim=2)
-        mlvl_bboxes = self.get_pesudo_bbox(mlvl_keypoints)
+        mlvl_bboxes = self.get_pseudo_bbox(mlvl_keypoints)
         det_bboxes, det_labels, nms_inds = multiclass_nms(mlvl_bboxes,
                                                           mlvl_scores,
                                                           cfg.score_thr,
@@ -741,7 +741,7 @@ class InsPoseHead(AnchorFreeHead):
             det_keypoints[..., :2] = kpt_loc
         return det_bboxes, det_labels, det_keypoints
 
-    def get_pesudo_bbox(self, kpts):
+    def get_pseudo_bbox(self, kpts):
         kpts_x = kpts[:, :, 0]
         kpts_y = kpts[:, :, 1]
         x1 = kpts_x.min(dim=1, keepdim=True)[0]

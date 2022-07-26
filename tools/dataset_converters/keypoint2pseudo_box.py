@@ -4,7 +4,7 @@ import copy
 import numpy as np
 
 
-def get_pesudo_bbox(kpts):
+def get_pseudo_bbox(kpts):
     tmp_kpts = []
     for kpt in kpts:
         if kpt[2] > 0:
@@ -36,7 +36,7 @@ def transform(data):
     new_anns = copy.deepcopy(anns)
     for ann in new_anns:
         kpts = np.array(ann['keypoints'], dtype=np.float32).reshape([17, 3])
-        new_bbox = get_pesudo_bbox(kpts)
+        new_bbox = get_pseudo_bbox(kpts)
         if new_bbox is not None:
             ann['bbox'] = new_bbox
 
@@ -48,7 +48,7 @@ def main():
     cur_path = '/dataset/public/coco/annotations/'
     cur_file = cur_path + 'person_keypoints_train2017.json'
     new_path = '/data/configs/inspose/'
-    new_file = new_path + 'person_keypoints_train2017_pesudobox.json'
+    new_file = new_path + 'person_keypoints_train2017_pseudobox.json'
     with open(cur_file, 'r') as f:
         data = json.load(f)
     new_data = transform(data)
