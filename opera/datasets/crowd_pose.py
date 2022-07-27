@@ -132,7 +132,6 @@ class CrowdPoseDataset(CocoPoseDataset):
 
         Args:
             ann_info (list[dict]): Annotation info of an image.
-            with_mask (bool): Whether to parse mask annotations.
 
         Returns:
             dict: A dict containing the following keys: bboxes, bboxes_ignore,

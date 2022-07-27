@@ -90,8 +90,7 @@ class RandomFlip(MMDetRandomFlip):
         Args:
             keypoints (numpy.ndarray): person's keypoints, shape (..., K*3).
             img_shape (tuple[int]): Image shape (height, width).
-            direction (str): Flip direction. Options are 'horizontal',
-                'vertical'.
+            direction (str): Flip direction. Only 'horizontal' is supported.
             flip_pairs (list): Flip pair indices.
 
         Returns:

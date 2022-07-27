@@ -600,13 +600,13 @@ class InsPoseHead(AnchorFreeHead):
             img_shape = img_metas[img_id]['img_shape']
             scale_factor = img_metas[img_id]['scale_factor']
             shared_feat = shared_feats[img_id]
-            det_bboxes = self._get_bboxes_single(cls_score_list,
-                                                 controller_pred_list,
-                                                 offset_pred_list, shared_feat,
-                                                 mlvl_points, img, img_meta,
-                                                 img_shape, scale_factor, cfg,
-                                                 rescale)
-            result_list.append(det_bboxes)
+            proposals = self._get_bboxes_single(cls_score_list,
+                                                controller_pred_list,
+                                                offset_pred_list, shared_feat,
+                                                mlvl_points, img, img_meta,
+                                                img_shape, scale_factor, cfg,
+                                                rescale)
+            result_list.append(proposals)
         return result_list
 
     def _get_bboxes_single(self,

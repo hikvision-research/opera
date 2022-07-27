@@ -56,7 +56,7 @@ model = dict(
         loss_hm=dict(type='opera.CenterFocalLoss', loss_weight=1.0),
         loss_weight_offset=1.0,
         unvisible_weight=0.1),
-    test_cfg = dict(
+    test_cfg=dict(
         nms_pre=1000,
         score_thr=0.05,
         nms=dict(type='soft_nms', iou_threshold=0.3),

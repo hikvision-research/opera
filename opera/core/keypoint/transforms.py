@@ -155,7 +155,7 @@ def bbox_kpt2result(bboxes, labels, kpts, num_classes):
 
 
 def kpt_flip(kpts, img_shape, flip_pairs, direction):
-    """Flip keypoints horizontally or vertically.
+    """Flip keypoints horizontally.
 
     Args:
         kpts (Tensor): Shape (n, K, 2).
