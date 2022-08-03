@@ -11,13 +11,13 @@ from mmcv import Config, DictAction
 from mmcv.cnn import fuse_conv_bn
 from mmcv.runner import (get_dist_info, init_dist, load_checkpoint,
                          wrap_fp16_model)
-from mmdet.datasets import replace_ImageToTensor
 from mmdet.utils import (build_ddp, build_dp, compat_cfg, get_device,
                          replace_cfg_vals, setup_multi_processes,
                          update_data_root)
 
 from opera.apis import multi_gpu_test, single_gpu_test
-from opera.datasets import build_dataloader, build_dataset
+from opera.datasets import (build_dataloader, build_dataset,
+                            replace_ImageToTensor)
 from opera.models import build_model
 
 

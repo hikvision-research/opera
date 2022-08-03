@@ -9,12 +9,12 @@ from mmcv.runner import (DistSamplerSeedHook, EpochBasedRunner,
                          Fp16OptimizerHook, OptimizerHook, build_runner,
                          get_dist_info)
 from mmdet.core import build_optimizer
-from mmdet.datasets import replace_ImageToTensor
 from mmdet.utils import (build_ddp, build_dp, compat_cfg,
                          find_latest_checkpoint, get_root_logger)
 
 from opera.core import DistEvalHook, EvalHook
-from opera.datasets import build_dataloader, build_dataset
+from opera.datasets import (build_dataloader, build_dataset,
+                            replace_ImageToTensor)
 
 
 def init_random_seed(seed=None, device='cuda'):
