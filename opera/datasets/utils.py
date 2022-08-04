@@ -1,3 +1,4 @@
+# Copyright (c) Hikvision Research Institute. All rights reserved.
 import copy
 import warnings
 
