@@ -45,6 +45,7 @@ If you find our works useful in your research, please consider citing:
   title={SOIT: Segmenting Objects with Instance-Aware Transformers},
   author={Yu, Xiaodong and Shi, Dahu and Wei, Xing and Ren, Ye and Ye, Tingqun and Tan, Wenming},
   booktitle={Proceedings of the AAAI Conference on Artificial Intelligence},
+  pages={3188--3196},
   year={2022}
 }
 
