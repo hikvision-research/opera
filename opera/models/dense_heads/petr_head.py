@@ -121,6 +121,8 @@ class PETRHead(AnchorFreeHead):
         self.num_keypoints = num_keypoints
         if self.as_two_stage:
             transformer['as_two_stage'] = self.as_two_stage
+        else:
+            raise RuntimeError('only "as_two_stage=True" is supported.')
         self.loss_cls = build_loss(loss_cls)
         self.loss_kpt = build_loss(loss_kpt)
         self.loss_kpt_rpn = build_loss(loss_kpt_rpn)
@@ -296,8 +298,7 @@ class PETRHead(AnchorFreeHead):
                 enc_outputs_class, enc_outputs_kpt.sigmoid(), \
                 hm_proto, memory, mlvl_masks
         else:
-            return outputs_classes, outputs_coords, outputs_kpts, \
-                None, None, None, hm_proto
+            raise RuntimeError('only "as_two_stage=True" is supported.')
 
     def forward_refine(self, memory, mlvl_masks, refine_targets, losses,
                        img_metas):
