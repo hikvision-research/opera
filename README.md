@@ -4,6 +4,7 @@
 
 To date, Opera implements the following algorithms:
 
+- [DK-DETR (ICCV'2023)](coming soon)
 - [PETR (CVPR'2022 Oral)](configs/petr)
 - [SOIT (AAAI'2022)](configs/soit)
 - [InsPose (ACM MM'2021)](configs/inspose)
