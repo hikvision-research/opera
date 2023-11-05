@@ -4,7 +4,7 @@
 
 To date, Opera implements the following algorithms:
 
-- [DK-DETR (ICCV'2023)](coming soon)
+- [DK-DETR (ICCV'2023)](configs/dk-detr)
 - [PETR (CVPR'2022 Oral)](configs/petr)
 - [SOIT (AAAI'2022)](configs/soit)
 - [InsPose (ACM MM'2021)](configs/inspose)
@@ -34,6 +34,14 @@ Opera is an open source project built upon [OpenMMLab](https://github.com/open-m
 
 If you find our works useful in your research, please consider citing:
 ```BibTeX
+@inproceedings{li2023distilling,
+  title={Distilling DETR with Visual-Linguistic Knowledge for Open-Vocabulary Object Detection},
+  author={Li, Liangqi and Miao, Jiaxu and Shi, Dahu and Tan, Wenming and Ren, Ye and Yang, Yi and Pu, Shiliang},
+  booktitle={Proceedings of the IEEE/CVF International Conference on Computer Vision},
+  pages={6501--6510},
+  year={2023}
+}
+
 @inproceedings{shi2022end,
   title={End-to-End Multi-Person Pose Estimation With Transformers},
   author={Shi, Dahu and Wei, Xing and Li, Liangqi and Ren, Ye and Tan, Wenming},
