@@ -14,6 +14,7 @@ POSITIONAL_ENCODING = Registry('Position encoding',
 TRANSFORMER_LAYER_SEQUENCE = Registry('transformer-layers sequence',
                                       parent=MMCV_TRANSFORMER_LAYER_SEQUENCE)
 TRANSFORMER = Registry('Transformer', parent=MMDET_TRANSFORMER)
+TEXT_ENCODER = Registry('Text Encoder')
 
 
 def build_attention(cfg, default_args=None):
@@ -34,3 +35,7 @@ def build_transformer_layer_sequence(cfg, default_args=None):
 def build_transformer(cfg, default_args=None):
     """Builder for Transformer."""
     return build_from_cfg(cfg, TRANSFORMER, default_args)
+
+def build_text_encoder(cfg, default_args=None):
+    """Builder for text encoder."""
+    return build_from_cfg(cfg, TEXT_ENCODER, default_args)

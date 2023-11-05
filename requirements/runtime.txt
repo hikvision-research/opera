@@ -3,3 +3,5 @@ numpy
 pycocotools
 six
 terminaltables
+transformers
+lvis
